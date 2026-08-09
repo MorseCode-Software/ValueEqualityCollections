@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <EnableDefaultItems>false</EnableDefaultItems>
+        <Nullable>enable</Nullable>
+        <RootNamespace>MorseCode.Collections.ValueEquality
+MorseCode.Collections.</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Include="IImmutableDictionaryWithValueEquality.cs" />
+      <Compile Include="IImmutableListWithValueEquality.cs" />
+      <Compile Include="IImmutableQueueWithValueEquality.cs" />
+      <Compile Include="IImmutableSetWithValueEquality.cs" />
+      <Compile Include="IImmutableStackWithValueEquality.cs" />
+      <Compile Include="IReadOnlyDictionaryWithValueEquality.cs" />
+      <Compile Include="IReadOnlyListWithValueEquality.cs" />
+      <Compile Include="IReadOnlyQueueWithValueEquality.cs" />
+      <Compile Include="IReadOnlySetWithValueEquality.cs" />
+      <Compile Include="IReadOnlyStackWithValueEquality.cs" />
+      <Compile Include="ValueEqualityCollectionFactory.cs" />
+    </ItemGroup>
+
+</Project>

@@ -1,2 +1,2 @@
-# ValueSemanticsCollections
-Interfaces and implementations of collections which use value semantics.
+# Value Equality Collections
+Interfaces and implementations of collections which use value equality.
