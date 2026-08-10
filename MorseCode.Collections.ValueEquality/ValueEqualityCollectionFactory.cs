@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -33,6 +34,19 @@ public static class ValueEqualityCollectionFactory
     public static IImmutableQueueWithValueEquality<T> CreateImmutableQueue<T>(Queue<T> immutableQueue) => null;
 
     public static IImmutableStackWithValueEquality<T> CreateImmutableStack<T>(Stack<T> immutableStack) => null;
+
+    public static IFrozenListWithValueEquality<T> CreateFrozenList<T>(IEnumerable<T> enumerable) =>
+        new FrozenListWithValueEquality<T>([.. enumerable]);
+
+    public static IFrozenSetWithValueEquality<T> CreateFrozenSet<T>(FrozenSet<T> frozenSet) => null;
+
+    public static IFrozenDictionaryWithValueEquality<TKey, TValue> CreateFrozenDictionary<TKey, TValue>(
+        FrozenDictionary<TKey, TValue> frozenDictionary) where TKey : notnull =>
+        null;
+
+    public static IFrozenQueueWithValueEquality<T> CreateFrozenQueue<T>(IEnumerable<T> enumerable) => null;
+
+    public static IFrozenStackWithValueEquality<T> CreateFrozenStack<T>(IEnumerable<T> enumerable) => null;
 
     private abstract class ReadOnlyCollectionWithValueEqualityBase<TCollection, T>(in TCollection underlying)
         : IReadOnlyCollection<T>
@@ -179,4 +193,7 @@ public static class ValueEqualityCollectionFactory
 
         IImmutableList<T> IImmutableList<T>.SetItem(int index, T value) => this.SetItem(index: index, value: value);
     }
+
+    private class FrozenListWithValueEquality<T>(in ImmutableArray<T> immutableArray)
+        : ReadOnlyListWithValueEquality<ImmutableArray<T>, T>(immutableArray), IFrozenListWithValueEquality<T>;
 }

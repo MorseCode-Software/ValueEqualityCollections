@@ -9,6 +9,11 @@ MorseCode.Collections.</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Include="IFrozenDictionaryWithValueEquality.cs" />
+      <Compile Include="IFrozenListWithValueEquality.cs" />
+      <Compile Include="IFrozenQueueWithValueEquality.cs" />
+      <Compile Include="IFrozenSetWithValueEquality.cs" />
+      <Compile Include="IFrozenStackWithValueEquality.cs" />
       <Compile Include="IImmutableDictionaryWithValueEquality.cs" />
       <Compile Include="IImmutableListWithValueEquality.cs" />
       <Compile Include="IImmutableQueueWithValueEquality.cs" />

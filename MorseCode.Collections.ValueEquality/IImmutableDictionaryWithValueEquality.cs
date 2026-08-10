@@ -2,6 +2,7 @@
 
 namespace MorseCode.Collections.ValueEquality;
 
-public interface IImmutableDictionaryWithValueEquality<TKey, TValue> : IImmutableDictionary<TKey, TValue>
+public interface IImmutableDictionaryWithValueEquality<TKey, TValue>
+    : IReadOnlyDictionaryWithValueEquality<TKey, TValue>, IImmutableDictionary<TKey, TValue>
 {
 }

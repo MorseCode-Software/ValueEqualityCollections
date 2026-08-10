@@ -2,6 +2,6 @@
 
 namespace MorseCode.Collections.ValueEquality;
 
-public interface IImmutableStackWithValueEquality<T> : IImmutableStack<T>
+public interface IImmutableStackWithValueEquality<T> : IReadOnlyStackWithValueEquality<T>, IImmutableStack<T>
 {
 }

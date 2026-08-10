@@ -2,6 +2,6 @@
 
 namespace MorseCode.Collections.ValueEquality;
 
-public interface IImmutableQueueWithValueEquality<T> : IImmutableQueue<T>
+public interface IImmutableQueueWithValueEquality<T> : IReadOnlyQueueWithValueEquality<T>, IImmutableQueue<T>
 {
 }
