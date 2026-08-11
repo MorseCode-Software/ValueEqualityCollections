@@ -5,37 +5,42 @@
         <EnableDefaultItems>false</EnableDefaultItems>
         <Nullable>enable</Nullable>
         <RootNamespace>MorseCode.Collections.ValueEquality
-MorseCode.Collections.</RootNamespace>
+            MorseCode.Collections.
+        </RootNamespace>
         <Title>Value Equality Collections</Title>
         <Authors>MorseCode Software LLC</Authors>
         <Description>Collection interfaces and implementations which use value equality.</Description>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
+        <DocumentationFile>bin\Debug\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
+        <DocumentationFile>bin\Release\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Include="IFrozenDictionaryWithValueEquality.cs" />
-      <Compile Include="IFrozenListWithValueEquality.cs" />
-      <Compile Include="IFrozenQueueWithValueEquality.cs" />
-      <Compile Include="IFrozenSetWithValueEquality.cs" />
-      <Compile Include="IFrozenStackWithValueEquality.cs" />
-      <Compile Include="IImmutableDictionaryWithValueEquality.cs" />
-      <Compile Include="IImmutableListWithValueEquality.cs" />
-      <Compile Include="IImmutableQueueWithValueEquality.cs" />
-      <Compile Include="IImmutableSetWithValueEquality.cs" />
-      <Compile Include="IImmutableStackWithValueEquality.cs" />
-      <Compile Include="IReadOnlyDictionaryWithValueEquality.cs" />
-      <Compile Include="IReadOnlyListWithValueEquality.cs" />
-      <Compile Include="IReadOnlyQueueWithValueEquality.cs" />
-      <Compile Include="IReadOnlySetWithValueEquality.cs" />
-      <Compile Include="IReadOnlyStackWithValueEquality.cs" />
-      <Compile Include="ValueEqualityCollectionFactory.cs" />
+        <Compile Include="IFrozenDictionaryWithValueEquality.cs"/>
+        <Compile Include="IFrozenListWithValueEquality.cs"/>
+        <Compile Include="IFrozenQueueWithValueEquality.cs"/>
+        <Compile Include="IFrozenSetWithValueEquality.cs"/>
+        <Compile Include="IFrozenStackWithValueEquality.cs"/>
+        <Compile Include="IImmutableDictionaryWithValueEquality.cs"/>
+        <Compile Include="IImmutableListWithValueEquality.cs"/>
+        <Compile Include="IImmutableQueueWithValueEquality.cs"/>
+        <Compile Include="IImmutableSetWithValueEquality.cs"/>
+        <Compile Include="IImmutableStackWithValueEquality.cs"/>
+        <Compile Include="IReadOnlyDictionaryWithValueEquality.cs"/>
+        <Compile Include="IReadOnlyListWithValueEquality.cs"/>
+        <Compile Include="IReadOnlyQueueWithValueEquality.cs"/>
+        <Compile Include="IReadOnlySetWithValueEquality.cs"/>
+        <Compile Include="IReadOnlyStackWithValueEquality.cs"/>
+        <Compile Include="ValueEqualityCollectionFactory.cs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0"/>
     </ItemGroup>
 
 </Project>

@@ -6,164 +6,523 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace MorseCode.Collections.ValueEquality;
 
+/// <summary>
+///     Provides factory methods for creating collections which use value equality.  When these collections are compared to
+///     another value equality collection, the items in the collection are compared to determine if the collections are
+///     equal.
+/// </summary>
 public static class ValueEqualityCollectionFactory
 {
+    /// <summary>Creates a wrapper around the read-only list <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">An <see cref="IReadOnlyList{T}" /> to wrap as a read-only list which uses value equality.</param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IReadOnlyListWithValueEquality{T}" /> which wraps the read-only list <paramref name="source" />
+    ///     and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IReadOnlyListWithValueEquality<T> ToReadOnlyListWithValueEquality<T>(
-        this IReadOnlyList<T> readOnlyList,
+        this IReadOnlyList<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
         new ReadOnlyListWithValueEquality<IReadOnlyList<T>, T>(
-            underlying: readOnlyList,
+            underlying: source,
             equalityComparer: equalityComparer);
 
-    public static IReadOnlyListWithValueEquality<T> CreateReadOnlyListWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new ReadOnlyListWithValueEquality<IReadOnlyList<T>, T>(
-            underlying: [.. readOnlySpan],
-            equalityComparer: equalityComparer);
-
+    /// <summary>Creates a wrapper around the read-only set <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">An <see cref="IReadOnlySet{T}" /> to wrap as a read-only set which uses value equality.</param>
+    /// <returns>
+    ///     An <see cref="IReadOnlySetWithValueEquality{T}" /> which wraps the read-only set <paramref name="source" />
+    ///     and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IReadOnlySetWithValueEquality<T>
-        ToReadOnlySetWithValueEquality<T>(this IReadOnlySet<T> readOnlySet) =>
-        new ReadOnlySetWithValueEquality<T>(readOnlySet);
+        ToReadOnlySetWithValueEquality<T>(this IReadOnlySet<T> source) =>
+        new ReadOnlySetWithValueEquality<T>(source);
 
-    public static IReadOnlySetWithValueEquality<T> CreateReadOnlySetWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new ReadOnlySetWithValueEquality<T>(new HashSet<T>(collection: [.. readOnlySpan], comparer: equalityComparer));
-
+    /// <summary>Creates a wrapper around the read-only dictionary <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="TKey">The type of keys of <paramref name="source" />.</typeparam>
+    /// <typeparam name="TValue">The type of values of <paramref name="source" />.</typeparam>
+    /// <param name="source">
+    ///     An <see cref="IReadOnlyDictionary{TKey,TValue}" /> to wrap as a read-only dictionary which uses
+    ///     value equality.
+    /// </param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing values.  Uses
+    ///     <see cref="EqualityComparer{TValue}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IReadOnlyDictionaryWithValueEquality{TKey,TValue}" /> which wraps the read-only dictionary
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IReadOnlyDictionaryWithValueEquality<TKey, TValue>
         ToReadOnlyDictionaryWithValueEquality<TKey, TValue>(
-            this IReadOnlyDictionary<TKey, TValue> readOnlyDictionary,
+            this IReadOnlyDictionary<TKey, TValue> source,
             IEqualityComparer<TValue>? equalityComparer = null) where TKey : notnull =>
         new ReadOnlyDictionaryWithValueEquality<IReadOnlyDictionary<TKey, TValue>, TKey, TValue>(
-            underlying: readOnlyDictionary,
+            underlying: source,
             equalityComparer: equalityComparer);
 
+    /// <summary>Creates a wrapper around the read-only queue <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">A <see cref="Queue{T}" /> to wrap as a read-only queue which uses value equality.</param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IReadOnlyQueueWithValueEquality{T}" /> which wraps the read-only queue
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IReadOnlyQueueWithValueEquality<T> ToReadOnlyQueueWithValueEquality<T>(
-        this Queue<T> readOnlyQueue,
+        this Queue<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
-        new ReadOnlyQueueWithValueEquality<T>(underlying: readOnlyQueue, equalityComparer: equalityComparer);
+        new ReadOnlyQueueWithValueEquality<T>(underlying: source, equalityComparer: equalityComparer);
 
-    public static IReadOnlyQueueWithValueEquality<T> CreateReadOnlyQueueWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new ReadOnlyQueueWithValueEquality<T>(
-            underlying: new Queue<T>([.. readOnlySpan]),
-            equalityComparer: equalityComparer);
-
+    /// <summary>Creates a wrapper around the read-only stack <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">A <see cref="Stack{T}" /> to wrap as a read-only stack which uses value equality.</param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IReadOnlyStackWithValueEquality{T}" /> which wraps the read-only stack
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IReadOnlyStackWithValueEquality<T> ToReadOnlyStackWithValueEquality<T>(
-        this Stack<T> readOnlyStack,
+        this Stack<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
-        new ReadOnlyStackWithValueEquality<T>(underlying: readOnlyStack, equalityComparer: equalityComparer);
+        new ReadOnlyStackWithValueEquality<T>(underlying: source, equalityComparer: equalityComparer);
 
-    public static IReadOnlyStackWithValueEquality<T> CreateReadOnlyStackWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new ReadOnlyStackWithValueEquality<T>(
-            underlying: new Stack<T>([.. readOnlySpan]),
-            equalityComparer: equalityComparer);
-
+    /// <summary>
+    ///     Copies the elements from <paramref name="source" /> into an immutable, read-only list and creates a wrapper
+    ///     around it which uses value equality.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">
+    ///     An <see cref="IEnumerable{T}" /> to wrap as an immutable, read-only list which uses value
+    ///     equality.
+    /// </param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IFrozenListWithValueEquality{T}" /> which wraps the immutable, read-only list created from
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IFrozenListWithValueEquality<T> ToFrozenListWithValueEquality<T>(
-        this IEnumerable<T> enumerable,
+        this IEnumerable<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
-        new FrozenListWithValueEquality<T>(immutableArray: [.. enumerable], equalityComparer: equalityComparer);
+        new FrozenListWithValueEquality<T>(immutableArray: [.. source], equalityComparer: equalityComparer);
 
-    public static IFrozenListWithValueEquality<T> CreateFrozenListWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new FrozenListWithValueEquality<T>(immutableArray: [.. readOnlySpan], equalityComparer: equalityComparer);
+    /// <summary>
+    ///     Creates a wrapper around the immutable, read-only set optimized for fast lookup and enumeration
+    ///     <paramref name="source" /> which uses value equality.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">A <see cref="FrozenSet{T}" /> to wrap as an immutable, read-only set which uses value equality.</param>
+    /// <returns>
+    ///     An <see cref="IFrozenSetWithValueEquality{T}" /> which wraps the immutable, read-only set
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
+    /// <remarks>
+    ///     Frozen sets are immutable and are optimized for situations where a set
+    ///     is created very infrequently but is used very frequently at run-time. They have a relatively high
+    ///     cost to create but provides excellent lookup performance. Thus, it is ideal for cases
+    ///     where a set is created once, potentially at the startup of an application, and is used throughout
+    ///     the remainder of the life of the application. A frozen set should only be initialized
+    ///     with trusted elements, as the details of the elements impacts construction time.
+    /// </remarks>
+    public static IFrozenSetWithValueEquality<T> ToFrozenSetWithValueEquality<T>(this FrozenSet<T> source) =>
+        new FrozenSetWithValueEquality<T>(source);
 
-    public static IFrozenSetWithValueEquality<T> ToFrozenSetWithValueEquality<T>(this FrozenSet<T> frozenSet) =>
-        new FrozenSetWithValueEquality<T>(frozenSet);
-
-    public static IFrozenSetWithValueEquality<T> CreateFrozenSetWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new FrozenSetWithValueEquality<T>(FrozenSet.Create(equalityComparer: equalityComparer, source: readOnlySpan));
-
+    /// <summary>
+    ///     Creates a wrapper around the immutable, read-only dictionary optimized for fast lookup and enumeration
+    ///     <paramref name="source" /> which uses value equality.
+    /// </summary>
+    /// <typeparam name="TKey">The type of keys of <paramref name="source" />.</typeparam>
+    /// <typeparam name="TValue">The type of values of <paramref name="source" />.</typeparam>
+    /// <param name="source">
+    ///     A <see cref="FrozenDictionary{TKey,TValue}" /> to wrap as an immutable, read-only dictionary which
+    ///     uses value equality.
+    /// </param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing values.  Uses
+    ///     <see cref="EqualityComparer{TValue}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IFrozenDictionaryWithValueEquality{TKey,TValue}" /> which wraps the immutable, read-only dictionary
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
+    /// <remarks>
+    ///     Frozen dictionaries are immutable and are optimized for situations where a set
+    ///     is created very infrequently but is used very frequently at run-time. They have a relatively high
+    ///     cost to create but provides excellent lookup performance. Thus, it is ideal for cases
+    ///     where a dictionary is created once, potentially at the startup of an application, and is used throughout
+    ///     the remainder of the life of the application. A frozen dictionary should only be initialized
+    ///     with trusted keys, as the details of the keys impacts construction time.
+    /// </remarks>
     public static IFrozenDictionaryWithValueEquality<TKey, TValue> ToFrozenDictionaryWithValueEquality<TKey, TValue>(
-        this FrozenDictionary<TKey, TValue> frozenDictionary,
+        this FrozenDictionary<TKey, TValue> source,
         IEqualityComparer<TValue>? equalityComparer = null) where TKey : notnull =>
         new FrozenDictionaryWithValueEquality<TKey, TValue>(
-            underlying: frozenDictionary,
+            underlying: source,
             equalityComparer: equalityComparer);
 
+    /// <summary>
+    ///     Copies the elements from <paramref name="source" /> into an immutable, read-only queue and creates a wrapper
+    ///     around it which uses value equality.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">
+    ///     An <see cref="IEnumerable{T}" /> to wrap as an immutable, read-only queue which uses value
+    ///     equality.
+    /// </param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IFrozenQueueWithValueEquality{T}" /> which wraps the immutable, read-only queue created from
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IFrozenQueueWithValueEquality<T> ToFrozenQueueWithValueEquality<T>(
-        this IEnumerable<T> enumerable,
+        this IEnumerable<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
         new FrozenQueueWithValueEquality<T>(
-            immutableQueue: ImmutableQueue.CreateRange(enumerable),
+            immutableQueue: ImmutableQueue.CreateRange(source),
             equalityComparer: equalityComparer);
 
-    public static IFrozenQueueWithValueEquality<T> CreateFrozenQueueWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new FrozenQueueWithValueEquality<T>(
-            immutableQueue: [.. readOnlySpan],
-            equalityComparer: equalityComparer);
-
+    /// <summary>
+    ///     Copies the elements from <paramref name="source" /> into an immutable, read-only stack and creates a wrapper
+    ///     around it which uses value equality.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">
+    ///     An <see cref="IEnumerable{T}" /> to wrap as an immutable, read-only stack which uses value
+    ///     equality.
+    /// </param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IFrozenStackWithValueEquality{T}" /> which wraps the immutable, read-only stack created from
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IFrozenStackWithValueEquality<T> ToFrozenStackWithValueEquality<T>(
-        this IEnumerable<T> enumerable,
+        this IEnumerable<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
         new FrozenStackWithValueEquality<T>(
-            immutableStack: ImmutableStack.CreateRange(enumerable),
+            immutableStack: ImmutableStack.CreateRange(source),
             equalityComparer: equalityComparer);
 
-    public static IFrozenStackWithValueEquality<T> CreateFrozenStackWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new FrozenStackWithValueEquality<T>(
-            immutableStack: [.. readOnlySpan],
-            equalityComparer: equalityComparer);
-
+    /// <summary>Creates a wrapper around the immutable list <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">An <see cref="IImmutableList{T}" /> to wrap as an immutable list which uses value equality.</param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IImmutableListWithValueEquality{T}" /> which wraps the immutable list <paramref name="source" />
+    ///     and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IImmutableListWithValueEquality<T> ToImmutableListWithValueEquality<T>(
-        this IImmutableList<T> immutableList,
+        this IImmutableList<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
-        new ImmutableListWithValueEquality<T>(underlying: immutableList, equalityComparer: equalityComparer);
+        new ImmutableListWithValueEquality<T>(underlying: source, equalityComparer: equalityComparer);
 
-    public static IImmutableListWithValueEquality<T> CreateImmutableListWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new ImmutableListWithValueEquality<T>(underlying: [.. readOnlySpan], equalityComparer: equalityComparer);
+    /// <summary>Creates a wrapper around the immutable set <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">An <see cref="IImmutableSet{T}" /> to wrap as an immutable set which uses value equality.</param>
+    /// <returns>
+    ///     An <see cref="IImmutableSetWithValueEquality{T}" /> which wraps the immutable set <paramref name="source" />
+    ///     and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
+    public static IImmutableSetWithValueEquality<T> ToImmutableSetWithValueEquality<T>(this IImmutableSet<T> source) =>
+        new ImmutableSetWithValueEquality<T>(source);
 
-    public static IImmutableSetWithValueEquality<T> ToImmutableSetWithValueEquality<T>(
-        this IImmutableSet<T> immutableSet) =>
-        new ImmutableSetWithValueEquality<T>(immutableSet);
-
-    public static IImmutableSetWithValueEquality<T>
-        CreateImmutableSetWithValueEquality<T>(ReadOnlySpan<T> readOnlySpan) =>
-        new ImmutableSetWithValueEquality<T>([.. readOnlySpan]);
-
+    /// <summary>Creates a wrapper around the immutable dictionary <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="TKey">The type of keys of <paramref name="source" />.</typeparam>
+    /// <typeparam name="TValue">The type of values of <paramref name="source" />.</typeparam>
+    /// <param name="source">
+    ///     An <see cref="IImmutableDictionary{TKey,TValue}" /> to wrap as an immutable dictionary which uses
+    ///     value equality.
+    /// </param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing values.  Uses
+    ///     <see cref="EqualityComparer{TValue}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IImmutableDictionaryWithValueEquality{TKey,TValue}" /> which wraps the immutable dictionary
+    ///     <paramref name="source" /> and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IImmutableDictionaryWithValueEquality<TKey, TValue>
-        CreateImmutableDictionaryWithValueEquality<TKey, TValue>(
-            IImmutableDictionary<TKey, TValue> immutableDictionary,
+        ToImmutableDictionaryWithValueEquality<TKey, TValue>(
+            this IImmutableDictionary<TKey, TValue> source,
             IEqualityComparer<TValue>? equalityComparer = null) where TKey : notnull =>
         new ImmutableDictionaryWithValueEquality<TKey, TValue>(
-            underlying: immutableDictionary,
+            underlying: source,
             equalityComparer: equalityComparer);
 
+    /// <summary>Creates a wrapper around the immutable queue <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">An <see cref="IImmutableQueue{T}" /> to wrap as an immutable queue which uses value equality.</param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IImmutableQueueWithValueEquality{T}" /> which wraps the immutable queue <paramref name="source" />
+    ///     and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IImmutableQueueWithValueEquality<T> ToImmutableQueueWithValueEquality<T>(
-        this IImmutableQueue<T> immutableQueue,
+        this IImmutableQueue<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
-        new ImmutableQueueWithValueEquality<T>(underlying: immutableQueue, equalityComparer: equalityComparer);
+        new ImmutableQueueWithValueEquality<T>(underlying: source, equalityComparer: equalityComparer);
 
-    public static IImmutableQueueWithValueEquality<T> CreateImmutableQueueWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new ImmutableQueueWithValueEquality<T>(underlying: [.. readOnlySpan], equalityComparer: equalityComparer);
-
+    /// <summary>Creates a wrapper around the immutable stack <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">An <see cref="IImmutableStack{T}" /> to wrap as an immutable stack which uses value equality.</param>
+    /// <param name="equalityComparer">
+    ///     The equality comparer used when comparing elements.  Uses
+    ///     <see cref="EqualityComparer{T}.Default" /> if not specified or <see langword="null" />.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IImmutableStackWithValueEquality{T}" /> which wraps the immutable stack <paramref name="source" />
+    ///     and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
     public static IImmutableStackWithValueEquality<T> ToImmutableStackWithValueEquality<T>(
-        this IImmutableStack<T> immutableStack,
+        this IImmutableStack<T> source,
         IEqualityComparer<T>? equalityComparer = null) =>
-        new ImmutableStackWithValueEquality<T>(underlying: immutableStack, equalityComparer: equalityComparer);
+        new ImmutableStackWithValueEquality<T>(underlying: source, equalityComparer: equalityComparer);
 
-    public static IImmutableStackWithValueEquality<T> CreateImmutableStackWithValueEquality<T>(
-        ReadOnlySpan<T> readOnlySpan,
-        IEqualityComparer<T>? equalityComparer = null) =>
-        new ImmutableStackWithValueEquality<T>(underlying: [.. readOnlySpan], equalityComparer: equalityComparer);
+    /// <summary>
+    ///     Provides factory methods for creating collections which use value equality given a <see cref="ReadOnlySpan{T}" />
+    ///     to allow for usage as a collection expression builder.  When these collections are compared to
+    ///     another value equality collection, the items in the collection are compared to determine if the collections are
+    ///     equal.
+    /// </summary>
+    [PublicAPI]
+    public static class CollectionExpressionBuilders
+    {
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into a read-only list and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as a read-only list which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IReadOnlyListWithValueEquality{T}" /> which wraps the read-only list
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IReadOnlyListWithValueEquality<T>
+            CreateReadOnlyListWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ReadOnlyListWithValueEquality<IReadOnlyList<T>, T>(
+                underlying: [.. source],
+                equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into a read-only set and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as a read-only set which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IReadOnlySetWithValueEquality{T}" /> which wraps the read-only set created from
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IReadOnlySetWithValueEquality<T>
+            CreateReadOnlySetWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ReadOnlySetWithValueEquality<T>(new HashSet<T>(collection: [.. source], comparer: null));
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into a read-only queue and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as a read-only queue which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IReadOnlyQueueWithValueEquality{T}" /> which wraps the read-only queue created from
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IReadOnlyQueueWithValueEquality<T>
+            CreateReadOnlyQueueWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ReadOnlyQueueWithValueEquality<T>(underlying: new Queue<T>([.. source]), equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into a read-only stack and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as a read-only stack which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IReadOnlyStackWithValueEquality{T}" /> which wraps the read-only stack created from
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IReadOnlyStackWithValueEquality<T>
+            CreateReadOnlyStackWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ReadOnlyStackWithValueEquality<T>(underlying: new Stack<T>([.. source]), equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable, read-only list and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable, read-only list which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IFrozenListWithValueEquality{T}" /> which wraps the immutable, read-only list
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IFrozenListWithValueEquality<T>
+            CreateFrozenListWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new FrozenListWithValueEquality<T>(immutableArray: [.. source], equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable, read-only set and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable, read-only set which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IFrozenSetWithValueEquality{T}" /> which wraps the immutable, read-only set
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IFrozenSetWithValueEquality<T> CreateFrozenSetWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new FrozenSetWithValueEquality<T>(FrozenSet.Create(equalityComparer: null, source: source));
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable, read-only queue and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable, read-only queue which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IFrozenQueueWithValueEquality{T}" /> which wraps the immutable, read-only queue
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IFrozenQueueWithValueEquality<T>
+            CreateFrozenQueueWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new FrozenQueueWithValueEquality<T>(immutableQueue: [.. source], equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable, read-only stack and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable, read-only stack which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IFrozenStackWithValueEquality{T}" /> which wraps the immutable, read-only stack
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IFrozenStackWithValueEquality<T>
+            CreateFrozenStackWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new FrozenStackWithValueEquality<T>(immutableStack: [.. source], equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable list and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable list which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IImmutableListWithValueEquality{T}" /> which wraps the immutable list
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IImmutableListWithValueEquality<T>
+            CreateImmutableListWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ImmutableListWithValueEquality<T>(underlying: [.. source], equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable set and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable set which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IImmutableSetWithValueEquality{T}" /> which wraps the immutable set
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IImmutableSetWithValueEquality<T>
+            CreateImmutableSetWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ImmutableSetWithValueEquality<T>([.. source]);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable queue and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable queue which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IImmutableQueueWithValueEquality{T}" /> which wraps the immutable queue
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IImmutableQueueWithValueEquality<T>
+            CreateImmutableQueueWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ImmutableQueueWithValueEquality<T>(underlying: [.. source], equalityComparer: null);
+
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into an immutable stack and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="ReadOnlySpan{T}" /> to wrap as an immutable stack which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IImmutableStackWithValueEquality{T}" /> which wraps the immutable stack
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IImmutableStackWithValueEquality<T>
+            CreateImmutableStackWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new ImmutableStackWithValueEquality<T>(underlying: [.. source], equalityComparer: null);
+    }
 
     #region Base Classes
 
@@ -191,8 +550,8 @@ public static class ValueEqualityCollectionFactory
     #region List Implementations
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateReadOnlyListWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlyListWithValueEquality))]
     private class ReadOnlyListWithValueEquality<TCollection, T>(
         in TCollection underlying,
         in IEqualityComparer<T>? equalityComparer)
@@ -211,8 +570,8 @@ public static class ValueEqualityCollectionFactory
     }
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateFrozenListWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateFrozenListWithValueEquality))]
     private sealed class FrozenListWithValueEquality<T>(
         in ImmutableArray<T> immutableArray,
         in IEqualityComparer<T>? equalityComparer)
@@ -222,8 +581,8 @@ public static class ValueEqualityCollectionFactory
             IFrozenListWithValueEquality<T>;
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateImmutableListWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateImmutableListWithValueEquality))]
     private sealed class ImmutableListWithValueEquality<T>(
         in IImmutableList<T> underlying,
         in IEqualityComparer<T>? equalityComparer)
@@ -233,9 +592,6 @@ public static class ValueEqualityCollectionFactory
             IImmutableListWithValueEquality<T>
     {
         private readonly IEqualityComparer<T>? equalityComparer = equalityComparer;
-
-        private ImmutableListWithValueEquality<T> CreateNew(IImmutableList<T> immutableList) =>
-            new(underlying: immutableList, equalityComparer: this.equalityComparer);
 
         public IImmutableListWithValueEquality<T> Add(T value) => this.CreateNew(this.Underlying.Add(value));
 
@@ -362,6 +718,9 @@ public static class ValueEqualityCollectionFactory
             this.Replace(oldValue: oldValue, newValue: newValue, equalityComparerOverride: equalityComparerOverride);
 
         IImmutableList<T> IImmutableList<T>.SetItem(int index, T value) => this.SetItem(index: index, value: value);
+
+        private ImmutableListWithValueEquality<T> CreateNew(IImmutableList<T> immutableList) =>
+            new(underlying: immutableList, equalityComparer: this.equalityComparer);
     }
 
     #endregion List Implementations
@@ -369,8 +728,8 @@ public static class ValueEqualityCollectionFactory
     #region Set Implementations
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateReadOnlySetWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlySetWithValueEquality))]
     private class ReadOnlySetWithValueEquality<T>(in IReadOnlySet<T> underlying)
         : ReadOnlyCollectionWithValueEqualityBase<IReadOnlySet<T>, T>(underlying),
             IReadOnlySetWithValueEquality<T>
@@ -395,22 +754,19 @@ public static class ValueEqualityCollectionFactory
     }
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateFrozenSetWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateFrozenSetWithValueEquality))]
     private sealed class FrozenSetWithValueEquality<T>(in FrozenSet<T> frozenSet)
         : ReadOnlySetWithValueEquality<T>(frozenSet),
             IFrozenSetWithValueEquality<T>;
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateImmutableSetWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateImmutableSetWithValueEquality))]
     private sealed class ImmutableSetWithValueEquality<T>(in IImmutableSet<T> underlying)
         : ReadOnlyCollectionWithValueEqualityBase<IImmutableSet<T>, T>(underlying),
             IImmutableSetWithValueEquality<T>
     {
-        private static ImmutableSetWithValueEquality<T> CreateNew(IImmutableSet<T> immutableSet) =>
-            new(underlying: immutableSet);
-
         public bool Contains(T item) => this.Underlying.Contains(item);
 
         public bool IsProperSubsetOf(IEnumerable<T> other) => this.Underlying.IsProperSubsetOf(other);
@@ -462,6 +818,9 @@ public static class ValueEqualityCollectionFactory
             ImmutableSetWithValueEquality<T>.CreateNew(this.Underlying.Union(other));
 
         IImmutableSet<T> IImmutableSet<T>.Union(IEnumerable<T> other) => this.Union(other);
+
+        private static ImmutableSetWithValueEquality<T> CreateNew(IImmutableSet<T> immutableSet) =>
+            new(underlying: immutableSet);
 
         public override bool Equals(object? obj) => obj is IReadOnlySetWithValueEquality<T> c && this.SetEquals(c);
 
@@ -544,10 +903,6 @@ public static class ValueEqualityCollectionFactory
     {
         private readonly IEqualityComparer<TValue>? equalityComparer = equalityComparer;
 
-        private ImmutableDictionaryWithValueEquality<TKey, TValue> CreateNew(
-            IImmutableDictionary<TKey, TValue> immutableDictionary) =>
-            new(underlying: immutableDictionary, equalityComparer: this.equalityComparer);
-
         public IImmutableDictionaryWithValueEquality<TKey, TValue> Clear() => this.CreateNew(this.Underlying.Clear());
 
         IImmutableDictionary<TKey, TValue> IImmutableDictionary<TKey, TValue>.Clear() => this.Clear();
@@ -595,6 +950,10 @@ public static class ValueEqualityCollectionFactory
 
         public bool TryGetKey(TKey equalKey, out TKey actualKey) =>
             this.Underlying.TryGetKey(equalKey: equalKey, actualKey: out actualKey);
+
+        private ImmutableDictionaryWithValueEquality<TKey, TValue> CreateNew(
+            IImmutableDictionary<TKey, TValue> immutableDictionary) =>
+            new(underlying: immutableDictionary, equalityComparer: this.equalityComparer);
     }
 
     #endregion Dictionary Implementations
@@ -602,8 +961,8 @@ public static class ValueEqualityCollectionFactory
     #region Queue Implementations
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateReadOnlyQueueWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlyQueueWithValueEquality))]
     private class ReadOnlyQueueWithValueEquality<T>(in Queue<T> underlying, in IEqualityComparer<T>? equalityComparer)
         : EnumerableWithValueEqualityBase<Queue<T>, T>(underlying),
             IReadOnlyQueueWithValueEquality<T>
@@ -626,8 +985,8 @@ public static class ValueEqualityCollectionFactory
     }
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateFrozenQueueWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateFrozenQueueWithValueEquality))]
     private sealed class FrozenQueueWithValueEquality<T>(
         in IImmutableQueue<T> immutableQueue,
         in IEqualityComparer<T>? equalityComparer)
@@ -664,8 +1023,8 @@ public static class ValueEqualityCollectionFactory
     }
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateImmutableQueueWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateImmutableQueueWithValueEquality))]
     private sealed class ImmutableQueueWithValueEquality<T>(
         in IImmutableQueue<T> underlying,
         in IEqualityComparer<T>? equalityComparer)
@@ -673,9 +1032,6 @@ public static class ValueEqualityCollectionFactory
             IImmutableQueueWithValueEquality<T>
     {
         private readonly IEqualityComparer<T>? equalityComparer = equalityComparer;
-
-        private ImmutableQueueWithValueEquality<T> CreateNew(IImmutableQueue<T> immutableQueue) =>
-            new(underlying: immutableQueue, equalityComparer: this.equalityComparer);
 
         public bool IsEmpty => this.Underlying.IsEmpty;
         public T Peek() => this.Underlying.Peek();
@@ -712,6 +1068,9 @@ public static class ValueEqualityCollectionFactory
         public IImmutableQueueWithValueEquality<T> Dequeue([MaybeNullWhen(false)] out T value) =>
             this.CreateNew(this.Underlying.Dequeue(out value));
 
+        private ImmutableQueueWithValueEquality<T> CreateNew(IImmutableQueue<T> immutableQueue) =>
+            new(underlying: immutableQueue, equalityComparer: this.equalityComparer);
+
         public override bool Equals(object? obj) =>
             obj is IReadOnlyQueueWithValueEquality<T> c &&
             this.SequenceEqual(second: c, comparer: this.equalityComparer);
@@ -724,8 +1083,8 @@ public static class ValueEqualityCollectionFactory
     #region Stack Implementations
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateReadOnlyStackWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlyStackWithValueEquality))]
     private class ReadOnlyStackWithValueEquality<T>(in Stack<T> underlying, in IEqualityComparer<T>? equalityComparer)
         : EnumerableWithValueEqualityBase<Stack<T>, T>(underlying),
             IReadOnlyStackWithValueEquality<T>
@@ -748,8 +1107,8 @@ public static class ValueEqualityCollectionFactory
     }
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateFrozenStackWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateFrozenStackWithValueEquality))]
     private sealed class FrozenStackWithValueEquality<T>(
         in IImmutableStack<T> immutableStack,
         in IEqualityComparer<T>? equalityComparer)
@@ -786,8 +1145,8 @@ public static class ValueEqualityCollectionFactory
     }
 
     [CollectionBuilder(
-        builderType: typeof(ValueEqualityCollectionFactory),
-        methodName: nameof(ValueEqualityCollectionFactory.CreateImmutableStackWithValueEquality))]
+        builderType: typeof(CollectionExpressionBuilders),
+        methodName: nameof(CollectionExpressionBuilders.CreateImmutableStackWithValueEquality))]
     private sealed class ImmutableStackWithValueEquality<T>(
         in IImmutableStack<T> underlying,
         in IEqualityComparer<T>? equalityComparer)
@@ -795,9 +1154,6 @@ public static class ValueEqualityCollectionFactory
             IImmutableStackWithValueEquality<T>
     {
         private readonly IEqualityComparer<T>? equalityComparer = equalityComparer;
-
-        private ImmutableStackWithValueEquality<T> CreateNew(IImmutableStack<T> immutableStack) =>
-            new(underlying: immutableStack, equalityComparer: this.equalityComparer);
 
         public bool IsEmpty => this.Underlying.IsEmpty;
         public T Peek() => this.Underlying.Peek();
@@ -833,6 +1189,9 @@ public static class ValueEqualityCollectionFactory
 
         public IImmutableStackWithValueEquality<T> Pop([MaybeNullWhen(false)] out T value) =>
             this.CreateNew(this.Underlying.Pop(out value));
+
+        private ImmutableStackWithValueEquality<T> CreateNew(IImmutableStack<T> immutableStack) =>
+            new(underlying: immutableStack, equalityComparer: this.equalityComparer);
 
         public override bool Equals(object? obj) =>
             obj is IReadOnlyStackWithValueEquality<T> c &&
