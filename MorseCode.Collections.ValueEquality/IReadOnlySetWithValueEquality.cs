@@ -2,6 +2,4 @@
 
 namespace MorseCode.Collections.ValueEquality;
 
-public interface IReadOnlySetWithValueEquality<T> : IReadOnlySet<T>
-{
-}
+public interface IReadOnlySetWithValueEquality<T> : IReadOnlySet<T>;

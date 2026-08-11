@@ -6,6 +6,17 @@
         <Nullable>enable</Nullable>
         <RootNamespace>MorseCode.Collections.ValueEquality
 MorseCode.Collections.</RootNamespace>
+        <Title>Value Equality Collections</Title>
+        <Authors>MorseCode Software LLC</Authors>
+        <Description>Collection interfaces and implementations which use value equality.</Description>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>

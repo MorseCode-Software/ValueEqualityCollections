@@ -145,6 +145,7 @@ public interface IImmutableListWithValueEquality<T> : IReadOnlyListWithValueEqua
     /// Searches for the specified object and returns the zero-based index of the
     /// first occurrence within this list.
     /// </summary>
+    /// <param name="list">The list to search.</param>
     /// <param name="item">
     /// The object to locate in this list. The value
     /// can be null for reference types.
@@ -158,25 +159,10 @@ public interface IImmutableListWithValueEquality<T> : IReadOnlyListWithValueEqua
 
     /// <summary>
     /// Searches for the specified object and returns the zero-based index of the
-    /// first occurrence within this list.
-    /// </summary>
-    /// <param name="item">
-    /// The object to locate in this list. The value
-    /// can be null for reference types.
-    /// </param>
-    /// <param name="equalityComparer">The equality comparer to use in the search.</param>
-    /// <returns>
-    /// The zero-based index of the first occurrence of item within the range of
-    /// elements in this list that extends from index
-    /// to the last element, if found; otherwise, -1.
-    /// </returns>
-    int IndexOf(T item, IEqualityComparer<T>? equalityComparer);
-
-    /// <summary>
-    /// Searches for the specified object and returns the zero-based index of the
     /// first occurrence within the range of elements in this list
     /// that extends from the specified index to the last element.
     /// </summary>
+    /// <param name="list">The list to search.</param>
     /// <param name="item">
     /// The object to locate in this list. The value
     /// can be null for reference types.
@@ -197,6 +183,7 @@ public interface IImmutableListWithValueEquality<T> : IReadOnlyListWithValueEqua
     /// first occurrence within the range of elements in this list
     /// that extends from the specified index to the last element.
     /// </summary>
+    /// <param name="list">The list to search.</param>
     /// <param name="item">
     /// The object to locate in this list. The value
     /// can be null for reference types.
@@ -219,6 +206,7 @@ public interface IImmutableListWithValueEquality<T> : IReadOnlyListWithValueEqua
     /// Searches for the specified object and returns the zero-based index of the
     /// last occurrence within this entire list.
     /// </summary>
+    /// <param name="list">The list to search.</param>
     /// <param name="item">
     /// The object to locate in this list. The value
     /// can be null for reference types.
@@ -231,24 +219,10 @@ public interface IImmutableListWithValueEquality<T> : IReadOnlyListWithValueEqua
 
     /// <summary>
     /// Searches for the specified object and returns the zero-based index of the
-    /// last occurrence within this entire list.
-    /// </summary>
-    /// <param name="item">
-    /// The object to locate in this list. The value
-    /// can be null for reference types.
-    /// </param>
-    /// <param name="equalityComparer">The equality comparer to use in the search.</param>
-    /// <returns>
-    /// The zero-based index of the last occurrence of item within this entire
-    /// list, if found; otherwise, -1.
-    /// </returns>
-    int LastIndexOf(T item, IEqualityComparer<T>? equalityComparer);
-
-    /// <summary>
-    /// Searches for the specified object and returns the zero-based index of the
     /// last occurrence within the range of elements in this list
     /// that extends from the first element to the specified index.
     /// </summary>
+    /// <param name="list">The list to search.</param>
     /// <param name="item">
     /// The object to locate in this list. The value
     /// can be null for reference types.
@@ -268,6 +242,7 @@ public interface IImmutableListWithValueEquality<T> : IReadOnlyListWithValueEqua
     /// last occurrence within the range of elements in this list
     /// that extends from the first element to the specified index.
     /// </summary>
+    /// <param name="list">The list to search.</param>
     /// <param name="item">
     /// The object to locate in this list. The value
     /// can be null for reference types.
