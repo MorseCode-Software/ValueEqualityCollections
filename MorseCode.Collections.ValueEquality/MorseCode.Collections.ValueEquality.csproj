@@ -8,14 +8,32 @@
         <Title>Value Equality Collections</Title>
         <Authors>MorseCode Software LLC</Authors>
         <Description>Collection interfaces and implementations which use value equality.</Description>
+        <PackageId>MorseCode.Collections.ValueEquality</PackageId>
+        <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/jam40jeff/ValueEqualityCollections</PackageProjectUrl>
+        <Version>1.0.0</Version>
+        <PackageVersion>1.0.0</PackageVersion>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <InformationalVersion>1.0.0.0</InformationalVersion>
+        <Company>MorseCode Software LLC</Company>
+        <Product>Value Equality Collections</Product>
+        <Copyright>Copyright © MorseCode Software LLC 2026</Copyright>
+        <IncludeSource>True</IncludeSource>
+        <IncludeSymbols>True</IncludeSymbols>
+        <AssemblyName>MorseCode.Collections.ValueEquality</AssemblyName>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <DocumentationFile>bin\Debug\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <DocumentationFile>bin\Release\MorseCode.Collections.ValueEquality.xml</DocumentationFile>
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>
