@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace MorseCode.Collections.ValueEquality;
 
@@ -12,6 +13,10 @@ namespace MorseCode.Collections.ValueEquality;
 ///     When compared to another <see cref="MorseCode.Collections.ValueEquality.IReadOnlyStackWithValueEquality{T}" />
 ///     , each element is sequentially compared for equality.
 /// </remarks>
+[CollectionBuilder(
+    builderType: typeof(ValueEqualityCollectionFactory.CollectionExpressionBuilders),
+    methodName: nameof(ValueEqualityCollectionFactory.CollectionExpressionBuilders
+        .CreateReadOnlyStackWithValueEquality))]
 public interface IReadOnlyStackWithValueEquality<T> : IEnumerable<T>
 {
     /// <summary>

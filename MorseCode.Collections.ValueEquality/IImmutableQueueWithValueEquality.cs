@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace MorseCode.Collections.ValueEquality;
 
@@ -13,6 +14,10 @@ namespace MorseCode.Collections.ValueEquality;
 ///     When compared to another <see cref="MorseCode.Collections.ValueEquality.IReadOnlyQueueWithValueEquality{T}" />
 ///     , each element is sequentially compared for equality.
 /// </remarks>
+[CollectionBuilder(
+    builderType: typeof(ValueEqualityCollectionFactory.CollectionExpressionBuilders),
+    methodName: nameof(ValueEqualityCollectionFactory.CollectionExpressionBuilders
+        .CreateImmutableQueueWithValueEquality))]
 public interface IImmutableQueueWithValueEquality<T> : IReadOnlyQueueWithValueEquality<T>, IImmutableQueue<T>
 {
     /// <summary>

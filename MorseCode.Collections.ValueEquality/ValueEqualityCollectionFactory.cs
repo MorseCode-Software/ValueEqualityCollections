@@ -549,9 +549,6 @@ public static class ValueEqualityCollectionFactory
 
     #region List Implementations
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlyListWithValueEquality))]
     private class ReadOnlyListWithValueEquality<TCollection, T>(
         in TCollection underlying,
         in IEqualityComparer<T>? equalityComparer)
@@ -569,9 +566,6 @@ public static class ValueEqualityCollectionFactory
         public override int GetHashCode() => this.Underlying.Count;
     }
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateFrozenListWithValueEquality))]
     private sealed class FrozenListWithValueEquality<T>(
         in ImmutableArray<T> immutableArray,
         in IEqualityComparer<T>? equalityComparer)
@@ -580,9 +574,6 @@ public static class ValueEqualityCollectionFactory
                 equalityComparer: equalityComparer),
             IFrozenListWithValueEquality<T>;
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateImmutableListWithValueEquality))]
     private sealed class ImmutableListWithValueEquality<T>(
         in IImmutableList<T> underlying,
         in IEqualityComparer<T>? equalityComparer)
@@ -727,9 +718,6 @@ public static class ValueEqualityCollectionFactory
 
     #region Set Implementations
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlySetWithValueEquality))]
     private class ReadOnlySetWithValueEquality<T>(in IReadOnlySet<T> underlying)
         : ReadOnlyCollectionWithValueEqualityBase<IReadOnlySet<T>, T>(underlying),
             IReadOnlySetWithValueEquality<T>
@@ -753,16 +741,10 @@ public static class ValueEqualityCollectionFactory
         public override int GetHashCode() => this.Underlying.Count;
     }
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateFrozenSetWithValueEquality))]
     private sealed class FrozenSetWithValueEquality<T>(in FrozenSet<T> frozenSet)
         : ReadOnlySetWithValueEquality<T>(frozenSet),
             IFrozenSetWithValueEquality<T>;
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateImmutableSetWithValueEquality))]
     private sealed class ImmutableSetWithValueEquality<T>(in IImmutableSet<T> underlying)
         : ReadOnlyCollectionWithValueEqualityBase<IImmutableSet<T>, T>(underlying),
             IImmutableSetWithValueEquality<T>
@@ -960,9 +942,6 @@ public static class ValueEqualityCollectionFactory
 
     #region Queue Implementations
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlyQueueWithValueEquality))]
     private class ReadOnlyQueueWithValueEquality<T>(in Queue<T> underlying, in IEqualityComparer<T>? equalityComparer)
         : EnumerableWithValueEqualityBase<Queue<T>, T>(underlying),
             IReadOnlyQueueWithValueEquality<T>
@@ -984,9 +963,6 @@ public static class ValueEqualityCollectionFactory
         public override int GetHashCode() => this.IsEmpty.GetHashCode();
     }
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateFrozenQueueWithValueEquality))]
     private sealed class FrozenQueueWithValueEquality<T>(
         in IImmutableQueue<T> immutableQueue,
         in IEqualityComparer<T>? equalityComparer)
@@ -1022,9 +998,6 @@ public static class ValueEqualityCollectionFactory
         public override int GetHashCode() => this.IsEmpty.GetHashCode();
     }
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateImmutableQueueWithValueEquality))]
     private sealed class ImmutableQueueWithValueEquality<T>(
         in IImmutableQueue<T> underlying,
         in IEqualityComparer<T>? equalityComparer)
@@ -1082,9 +1055,6 @@ public static class ValueEqualityCollectionFactory
 
     #region Stack Implementations
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateReadOnlyStackWithValueEquality))]
     private class ReadOnlyStackWithValueEquality<T>(in Stack<T> underlying, in IEqualityComparer<T>? equalityComparer)
         : EnumerableWithValueEqualityBase<Stack<T>, T>(underlying),
             IReadOnlyStackWithValueEquality<T>
@@ -1106,9 +1076,6 @@ public static class ValueEqualityCollectionFactory
         public override int GetHashCode() => this.IsEmpty.GetHashCode();
     }
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateFrozenStackWithValueEquality))]
     private sealed class FrozenStackWithValueEquality<T>(
         in IImmutableStack<T> immutableStack,
         in IEqualityComparer<T>? equalityComparer)
@@ -1144,9 +1111,6 @@ public static class ValueEqualityCollectionFactory
         public override int GetHashCode() => this.IsEmpty.GetHashCode();
     }
 
-    [CollectionBuilder(
-        builderType: typeof(CollectionExpressionBuilders),
-        methodName: nameof(CollectionExpressionBuilders.CreateImmutableStackWithValueEquality))]
     private sealed class ImmutableStackWithValueEquality<T>(
         in IImmutableStack<T> underlying,
         in IEqualityComparer<T>? equalityComparer)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
 namespace MorseCode.Collections.ValueEquality;
 
@@ -10,6 +11,10 @@ namespace MorseCode.Collections.ValueEquality;
 ///     When compared to another <see cref="MorseCode.Collections.ValueEquality.IReadOnlySetWithValueEquality{T}" />,
 ///     each element is tested for equality to ensure that the set of items in both sets are the same.
 /// </remarks>
+[CollectionBuilder(
+    builderType: typeof(ValueEqualityCollectionFactory.CollectionExpressionBuilders),
+    methodName: nameof(ValueEqualityCollectionFactory.CollectionExpressionBuilders
+        .CreateImmutableSetWithValueEquality))]
 public interface IImmutableSetWithValueEquality<T> : IReadOnlySetWithValueEquality<T>, IImmutableSet<T>
 {
     /// <summary>
