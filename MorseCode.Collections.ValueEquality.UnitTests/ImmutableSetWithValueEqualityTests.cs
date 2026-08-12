@@ -1,0 +1,643 @@
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Threading.Tasks;
+
+namespace MorseCode.Collections.ValueEquality.UnitTests;
+
+public class ImmutableSetWithValueEqualityTests
+{
+    [Test]
+    public async Task CollectionExpression_WhenSetIsEmpty_ThenResultIsEmpty()
+    {
+        // Arrange
+
+        // Act
+        // ReSharper disable once CollectionNeverUpdated.Local
+        IImmutableSetWithValueEquality<int> set = [];
+
+        // Assert
+        await Assert.That(set.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task CollectionExpression_WhenSetHasThreeItems_ThenResultHasSameThreeItems()
+    {
+        // Arrange
+
+        // Act
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Assert
+        await Assert.That(set.Count).IsEqualTo(3);
+        await Assert.That(set).IsEquivalentTo([1, 2, 3]);
+    }
+
+    [Test]
+    public async Task ToImmutableSetWithValueEquality_WhenSetIsEmpty_ThenResultIsEmpty()
+    {
+        // Arrange
+        IImmutableSet<int> setWithoutValueEquality = ImmutableHashSet.Create<int>();
+
+        // Act
+        IImmutableSetWithValueEquality<int> set = setWithoutValueEquality.ToImmutableSetWithValueEquality();
+
+        // Assert
+        await Assert.That(set.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task ToImmutableSetWithValueEquality_WhenSetHasThreeItems_ThenResultHasSameThreeItems()
+    {
+        // Arrange
+        IImmutableSet<int> setWithoutValueEquality = ImmutableHashSet.Create(1, 2, 3);
+
+        // Act
+        IImmutableSetWithValueEquality<int> set = setWithoutValueEquality.ToImmutableSetWithValueEquality();
+
+        // Assert
+        await Assert.That(set.Count).IsEqualTo(3);
+        await Assert.That(set).IsEquivalentTo([1, 2, 3]);
+    }
+
+    [Test]
+    public async Task Equals_WhenSetsHaveDifferentNumberElements_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set1 = [1, 2, 3];
+        IImmutableSetWithValueEquality<int> set2 = [1, 2];
+
+        // Act
+        bool areEqual = set1.Equals(set2);
+
+        // Assert
+        await Assert.That(areEqual).IsFalse();
+    }
+
+    [Test]
+    public async Task Equals_WhenSetsHaveDifferentElements_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set1 = [1, 2, 3];
+        IImmutableSetWithValueEquality<int> set2 = [3, 4, 5];
+
+        // Act
+        bool areEqual = set1.Equals(set2);
+
+        // Assert
+        await Assert.That(areEqual).IsFalse();
+    }
+
+    [Test]
+    public async Task Equals_WhenSetsHaveSameElementsInDifferentOrder_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set1 = [1, 2, 3];
+        IImmutableSetWithValueEquality<int> set2 = [2, 1, 3];
+
+        // Act
+        bool areEqual = set1.Equals(set2);
+
+        // Assert
+        await Assert.That(areEqual).IsTrue();
+    }
+
+    [Test]
+    public async Task Equals_WhenSetsHaveSameElementsInSameOrder_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set1 = [1, 2, 3];
+        IImmutableSetWithValueEquality<int> set2 = [1, 2, 3];
+
+        // Act
+        bool areEqual = set1.Equals(set2);
+
+        // Assert
+        await Assert.That(areEqual).IsTrue();
+    }
+
+    [Test]
+    public async Task RecordEquals_WhenSetsHaveDifferentNumberElements_ThenReturnsFalse()
+    {
+        // Arrange
+        Record record1 = new([1, 2, 3]);
+        Record record2 = new([1, 2]);
+
+        // Act
+        bool areEqual = record1 == record2;
+
+        // Assert
+        await Assert.That(areEqual).IsFalse();
+    }
+
+    [Test]
+    public async Task RecordEquals_WhenSetsHaveDifferentElements_ThenReturnsFalse()
+    {
+        // Arrange
+        Record record1 = new([1, 2, 3]);
+        Record record2 = new([3, 4, 5]);
+
+        // Act
+        bool areEqual = record1 == record2;
+
+        // Assert
+        await Assert.That(areEqual).IsFalse();
+    }
+
+    [Test]
+    public async Task RecordEquals_WhenSetsHaveSameElementsInDifferentOrder_ThenReturnsTrue()
+    {
+        // Arrange
+        Record record1 = new([1, 2, 3]);
+        Record record2 = new([2, 1, 3]);
+
+        // Act
+        bool areEqual = record1 == record2;
+
+        // Assert
+        await Assert.That(areEqual).IsTrue();
+    }
+
+    [Test]
+    public async Task RecordEquals_WhenSetsHaveSameElementsInSameOrder_ThenReturnsTrue()
+    {
+        // Arrange
+        Record record1 = new([1, 2, 3]);
+        Record record2 = new([1, 2, 3]);
+
+        // Act
+        bool areEqual = record1 == record2;
+
+        // Assert
+        await Assert.That(areEqual).IsTrue();
+    }
+
+    [Test]
+    public async Task Count_WhenSetIsEmpty_ThenResultIs0()
+    {
+        // Arrange
+        // ReSharper disable once CollectionNeverUpdated.Local
+        IImmutableSetWithValueEquality<int> set = [];
+
+        // Act
+        int count = set.Count;
+
+        // Assert
+        await Assert.That(count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Count_WhenSetHasThreeItems_ThenResultIs3()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        int count = set.Count;
+
+        // Assert
+        await Assert.That(count).IsEqualTo(3);
+    }
+
+    [Test]
+    public async Task Contains_WhenItemIsInSet_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        bool contains = set.Contains(2);
+
+        // Assert
+        await Assert.That(contains).IsTrue();
+    }
+
+    [Test]
+    public async Task Contains_WhenItemIsNotInSet_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        bool contains = set.Contains(5);
+
+        // Assert
+        await Assert.That(contains).IsFalse();
+    }
+
+    [Test]
+    public async Task IsProperSubsetOf_WhenSetIsProperSubsetOfOther_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2];
+        int[] other = [1, 2, 3];
+
+        // Act
+        bool isProperSubset = set.IsProperSubsetOf(other);
+
+        // Assert
+        await Assert.That(isProperSubset).IsTrue();
+    }
+
+    [Test]
+    public async Task IsProperSubsetOf_WhenSetIsNotProperSubsetOfOther_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [1, 2, 3];
+
+        // Act
+        bool isProperSubset = set.IsProperSubsetOf(other);
+
+        // Assert
+        await Assert.That(isProperSubset).IsFalse();
+    }
+
+    [Test]
+    public async Task IsProperSupersetOf_WhenSetIsProperSupersetOfOther_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [1, 2];
+
+        // Act
+        bool isProperSuperset = set.IsProperSupersetOf(other);
+
+        // Assert
+        await Assert.That(isProperSuperset).IsTrue();
+    }
+
+    [Test]
+    public async Task IsProperSupersetOf_WhenSetIsNotProperSupersetOfOther_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2];
+        int[] other = [1, 2, 3];
+
+        // Act
+        bool isProperSuperset = set.IsProperSupersetOf(other);
+
+        // Assert
+        await Assert.That(isProperSuperset).IsFalse();
+    }
+
+    [Test]
+    public async Task IsSubsetOf_WhenSetIsSubsetOfOther_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2];
+        int[] other = [1, 2, 3];
+
+        // Act
+        bool isSubset = set.IsSubsetOf(other);
+
+        // Assert
+        await Assert.That(isSubset).IsTrue();
+    }
+
+    [Test]
+    public async Task IsSubsetOf_WhenSetIsNotSubsetOfOther_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 4];
+        int[] other = [1, 2, 3];
+
+        // Act
+        bool isSubset = set.IsSubsetOf(other);
+
+        // Assert
+        await Assert.That(isSubset).IsFalse();
+    }
+
+    [Test]
+    public async Task IsSupersetOf_WhenSetIsSupersetOfOther_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [1, 2];
+
+        // Act
+        bool isSuperset = set.IsSupersetOf(other);
+
+        // Assert
+        await Assert.That(isSuperset).IsTrue();
+    }
+
+    [Test]
+    public async Task IsSupersetOf_WhenSetIsNotSupersetOfOther_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2];
+        int[] other = [1, 2, 3];
+
+        // Act
+        bool isSuperset = set.IsSupersetOf(other);
+
+        // Assert
+        await Assert.That(isSuperset).IsFalse();
+    }
+
+    [Test]
+    public async Task Overlaps_WhenSetSharesElementWithOther_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [3, 4, 5];
+
+        // Act
+        bool overlaps = set.Overlaps(other);
+
+        // Assert
+        await Assert.That(overlaps).IsTrue();
+    }
+
+    [Test]
+    public async Task Overlaps_WhenSetSharesNoElementWithOther_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [4, 5, 6];
+
+        // Act
+        bool overlaps = set.Overlaps(other);
+
+        // Assert
+        await Assert.That(overlaps).IsFalse();
+    }
+
+    [Test]
+    public async Task SetEquals_WhenSetHasSameElementsAsOther_ThenReturnsTrue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [3, 2, 1];
+
+        // Act
+        bool setEquals = set.SetEquals(other);
+
+        // Assert
+        await Assert.That(setEquals).IsTrue();
+    }
+
+    [Test]
+    public async Task SetEquals_WhenSetDoesNotHaveSameElementsAsOther_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [1, 2, 4];
+
+        // Act
+        bool setEquals = set.SetEquals(other);
+
+        // Assert
+        await Assert.That(setEquals).IsFalse();
+    }
+
+    [Test]
+    public async Task Enumerator_WhenSetIsEmpty_ThenNoElementsAreEnumerated()
+    {
+        // Arrange
+        // ReSharper disable once CollectionNeverUpdated.Local
+        IImmutableSetWithValueEquality<int> set = [];
+
+        // Act
+        List<int> result = [];
+
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        foreach (int item in set)
+        {
+            result.Add(item);
+        }
+
+        // Assert
+        await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
+    public async Task Enumerator_WhenSetHasThreeItems_ThenSameThreeElementsAreEnumerated()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        List<int> result = [];
+
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        foreach (int item in set)
+        {
+            result.Add(item);
+        }
+
+        // Assert
+        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
+    }
+
+    [Test]
+    public async Task Clear_WhenSetHasItems_ThenResultIsEmptyAndOriginalSetIsUnchanged()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Clear();
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(result).IsEmpty();
+            await Assert.That(set).IsEquivalentTo([1, 2, 3]);
+        }
+    }
+
+    [Test]
+    public async Task Add_WhenItemIsNew_ThenResultContainsNewItemAndOriginalSetIsUnchanged()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Add(4);
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(result).IsEquivalentTo([1, 2, 3, 4]);
+            await Assert.That(set).IsEquivalentTo([1, 2, 3]);
+        }
+    }
+
+    [Test]
+    public async Task Add_WhenItemIsAlreadyPresent_ThenResultIsEquivalentToOriginalSet()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Add(2);
+
+        // Assert
+        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
+    }
+
+    [Test]
+    public async Task Remove_WhenItemIsPresent_ThenResultDoesNotContainItemAndOriginalSetIsUnchanged()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Remove(2);
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(result).IsEquivalentTo([1, 3]);
+            await Assert.That(set).IsEquivalentTo([1, 2, 3]);
+        }
+    }
+
+    [Test]
+    public async Task Remove_WhenItemIsNotPresent_ThenResultIsEquivalentToOriginalSet()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Remove(5);
+
+        // Assert
+        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
+    }
+
+    [Test]
+    public async Task Intersect_WhenSetsOverlap_ThenResultContainsOnlyCommonItemsAndOriginalSetIsUnchanged()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3, 4];
+        int[] other = [3, 4, 5, 6];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Intersect(other);
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(result).IsEquivalentTo([3, 4]);
+            await Assert.That(set).IsEquivalentTo([1, 2, 3, 4]);
+        }
+    }
+
+    [Test]
+    public async Task Except_WhenSetsOverlap_ThenResultExcludesCommonItemsAndOriginalSetIsUnchanged()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3, 4];
+        int[] other = [3, 4];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Except(other);
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(result).IsEquivalentTo([1, 2]);
+            await Assert.That(set).IsEquivalentTo([1, 2, 3, 4]);
+        }
+    }
+
+    [Test]
+    public async Task
+        SymmetricExcept_WhenSetsOverlap_ThenResultContainsElementsInEitherSetButNotBothAndOriginalSetIsUnchanged()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        int[] other = [2, 3, 4];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.SymmetricExcept(other);
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(result).IsEquivalentTo([1, 4]);
+            await Assert.That(set).IsEquivalentTo([1, 2, 3]);
+        }
+    }
+
+    [Test]
+    public async Task Union_WhenSetsDiffer_ThenResultContainsAllItemsFromBothSetsAndOriginalSetIsUnchanged()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2];
+        int[] other = [2, 3];
+
+        // Act
+        IImmutableSetWithValueEquality<int> result = set.Union(other);
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(result).IsEquivalentTo([1, 2, 3]);
+            await Assert.That(set).IsEquivalentTo([1, 2]);
+        }
+    }
+
+    [Test]
+    public async Task TryGetValue_WhenItemIsFound_ThenReturnsTrueAndOutputsEqualValue()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        bool found = set.TryGetValue(equalValue: 2, actualValue: out int actualValue);
+
+        // Assert
+        using (Assert.Multiple())
+        {
+            await Assert.That(found).IsTrue();
+            await Assert.That(actualValue).IsEqualTo(2);
+        }
+    }
+
+    [Test]
+    public async Task TryGetValue_WhenItemIsNotFound_ThenReturnsFalse()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+
+        // Act
+        bool found = set.TryGetValue(equalValue: 5, actualValue: out int _);
+
+        // Assert
+        await Assert.That(found).IsFalse();
+    }
+
+    [Test]
+    public async Task Add_WhenCalledThroughBaseImmutableSetInterface_ThenReturnsSetWithItemAdded()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        IImmutableSet<int> baseSet = set;
+
+        // Act
+        IImmutableSet<int> result = baseSet.Add(4);
+
+        // Assert
+        await Assert.That(result).IsEquivalentTo([1, 2, 3, 4]);
+    }
+
+    [Test]
+    public async Task Contains_WhenCalledThroughBaseImmutableSetInterface_ThenReturnsTrueForPresentItem()
+    {
+        // Arrange
+        IImmutableSetWithValueEquality<int> set = [1, 2, 3];
+        IImmutableSet<int> baseSet = set;
+
+        // Act
+        bool contains = baseSet.Contains(2);
+
+        // Assert
+        await Assert.That(contains).IsTrue();
+    }
+
+    private record Record(IImmutableSetWithValueEquality<int> Set);
+}

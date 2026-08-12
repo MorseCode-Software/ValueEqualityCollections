@@ -4,9 +4,7 @@
         <TargetFramework>net10.0</TargetFramework>
         <EnableDefaultItems>false</EnableDefaultItems>
         <Nullable>enable</Nullable>
-        <RootNamespace>MorseCode.Collections.ValueEquality
-            MorseCode.Collections.
-        </RootNamespace>
+        <RootNamespace>MorseCode.Collections.ValueEquality</RootNamespace>
         <Title>Value Equality Collections</Title>
         <Authors>MorseCode Software LLC</Authors>
         <Description>Collection interfaces and implementations which use value equality.</Description>

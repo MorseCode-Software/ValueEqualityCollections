@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
-public class ReadOnlyListWithValueEqualityTests
+public class FrozenListWithValueEqualityTests
 {
     [Test]
     public async Task CollectionExpression_WhenListIsEmpty_ThenResultIsEmpty()
@@ -12,7 +12,7 @@ public class ReadOnlyListWithValueEqualityTests
 
         // Act
         // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyListWithValueEquality<int> list = [];
+        IFrozenListWithValueEquality<int> list = [];
 
         // Assert
         await Assert.That(list.Count).IsEqualTo(0);
@@ -24,7 +24,7 @@ public class ReadOnlyListWithValueEqualityTests
         // Arrange
 
         // Act
-        IReadOnlyListWithValueEquality<int> list = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list = [1, 2, 3];
 
         // Assert
         await Assert.That(list.Count).IsEqualTo(3);
@@ -38,27 +38,27 @@ public class ReadOnlyListWithValueEqualityTests
     }
 
     [Test]
-    public async Task ToReadOnlyListWithValueEquality_WhenListIsEmpty_ThenResultIsEmpty()
+    public async Task ToFrozenListWithValueEquality_WhenListIsEmpty_ThenResultIsEmpty()
     {
         // Arrange
         // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyList<int> listWithoutValueEquality = [];
+        IEnumerable<int> listWithoutValueEquality = [];
 
         // Act
-        IReadOnlyListWithValueEquality<int> list = listWithoutValueEquality.ToReadOnlyListWithValueEquality();
+        IFrozenListWithValueEquality<int> list = listWithoutValueEquality.ToFrozenListWithValueEquality();
 
         // Assert
         await Assert.That(list.Count).IsEqualTo(0);
     }
 
     [Test]
-    public async Task ToReadOnlyListWithValueEquality_WhenListHasThreeItems_ThenResultHasSameThreeItems()
+    public async Task ToFrozenListWithValueEquality_WhenListHasThreeItems_ThenResultHasSameThreeItems()
     {
         // Arrange
-        IReadOnlyList<int> listWithoutValueEquality = [1, 2, 3];
+        IEnumerable<int> listWithoutValueEquality = [1, 2, 3];
 
         // Act
-        IReadOnlyListWithValueEquality<int> list = listWithoutValueEquality.ToReadOnlyListWithValueEquality();
+        IFrozenListWithValueEquality<int> list = listWithoutValueEquality.ToFrozenListWithValueEquality();
 
         // Assert
         await Assert.That(list.Count).IsEqualTo(3);
@@ -75,8 +75,8 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Equals_WhenListsHaveDifferentNumberElements_ThenReturnsFalse()
     {
         // Arrange
-        IReadOnlyListWithValueEquality<int> list1 = [1, 2, 3];
-        IReadOnlyListWithValueEquality<int> list2 = [1, 2];
+        IFrozenListWithValueEquality<int> list1 = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list2 = [1, 2];
 
         // Act
         bool areEqual = list1.Equals(list2);
@@ -89,8 +89,8 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Equals_WhenListsHaveDifferentElements_ThenReturnsFalse()
     {
         // Arrange
-        IReadOnlyListWithValueEquality<int> list1 = [1, 2, 3];
-        IReadOnlyListWithValueEquality<int> list2 = [3, 4, 5];
+        IFrozenListWithValueEquality<int> list1 = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list2 = [3, 4, 5];
 
         // Act
         bool areEqual = list1.Equals(list2);
@@ -103,8 +103,8 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Equals_WhenListsHaveSameElementsInDifferentOrder_ThenReturnsFalse()
     {
         // Arrange
-        IReadOnlyListWithValueEquality<int> list1 = [1, 2, 3];
-        IReadOnlyListWithValueEquality<int> list2 = [2, 1, 3];
+        IFrozenListWithValueEquality<int> list1 = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list2 = [2, 1, 3];
 
         // Act
         bool areEqual = list1.Equals(list2);
@@ -117,8 +117,8 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Equals_WhenListsHaveSameElementsInSameOrder_ThenReturnsTrue()
     {
         // Arrange
-        IReadOnlyListWithValueEquality<int> list1 = [1, 2, 3];
-        IReadOnlyListWithValueEquality<int> list2 = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list1 = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list2 = [1, 2, 3];
 
         // Act
         bool areEqual = list1.Equals(list2);
@@ -188,7 +188,7 @@ public class ReadOnlyListWithValueEqualityTests
     {
         // Arrange
         // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyListWithValueEquality<int> list = [];
+        IFrozenListWithValueEquality<int> list = [];
 
         // Act
         int count = list.Count;
@@ -201,7 +201,7 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Count_WhenListHasThreeItems_ThenResultIs3()
     {
         // Arrange
-        IReadOnlyListWithValueEquality<int> list = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list = [1, 2, 3];
 
         // Act
         int count = list.Count;
@@ -214,7 +214,7 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Indexer_WhenListHasSecondItemOf4_ThenIndex1Is4()
     {
         // Arrange
-        IReadOnlyListWithValueEquality<int> list = [3, 4, 5];
+        IFrozenListWithValueEquality<int> list = [3, 4, 5];
 
         // Act
         int item = list[1];
@@ -228,7 +228,7 @@ public class ReadOnlyListWithValueEqualityTests
     {
         // Arrange
         // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyListWithValueEquality<int> list = [];
+        IFrozenListWithValueEquality<int> list = [];
 
         // Act
         List<int> result = [];
@@ -248,7 +248,7 @@ public class ReadOnlyListWithValueEqualityTests
     {
         // Arrange
         // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyListWithValueEquality<int> list = [1, 2, 3];
+        IFrozenListWithValueEquality<int> list = [1, 2, 3];
 
         // Act
         List<int> result = [];
@@ -263,5 +263,5 @@ public class ReadOnlyListWithValueEqualityTests
         await Assert.That(result).IsEquivalentTo([1, 2, 3]);
     }
 
-    private record Record(IReadOnlyListWithValueEquality<int> List);
+    private record Record(IFrozenListWithValueEquality<int> List);
 }

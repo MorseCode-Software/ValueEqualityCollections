@@ -2,17 +2,38 @@
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <EnableDefaultItems>false</EnableDefaultItems>
         <Nullable>enable</Nullable>
+        <RootNamespace>MorseCode.Collections.ValueEquality.UnitTests</RootNamespace>
+        <Title>Value Equality Collections</Title>
+        <Authors>MorseCode Software LLC</Authors>
+        <Description>Unit tests for MorseCode.Collections.ValueEquality.</Description>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
-      <PackageReference Include="TUnit" Version="1.64.13" />
+        <PackageReference Include="TUnit" Version="1.64.13"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MorseCode.Collections.ValueEquality\MorseCode.Collections.ValueEquality.csproj" />
+        <ProjectReference Include="..\MorseCode.Collections.ValueEquality\MorseCode.Collections.ValueEquality.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="FrozenDictionaryWithValueEqualityTests.cs"/>
+        <Compile Include="FrozenListWithValueEqualityTests.cs"/>
+        <Compile Include="FrozenQueueWithValueEqualityTests.cs"/>
+        <Compile Include="FrozenSetWithValueEqualityTests.cs"/>
+        <Compile Include="FrozenStackWithValueEqualityTests.cs"/>
+        <Compile Include="ImmutableDictionaryWithValueEqualityTests.cs"/>
+        <Compile Include="ImmutableListWithValueEqualityTests.cs"/>
+        <Compile Include="ImmutableQueueWithValueEqualityTests.cs"/>
+        <Compile Include="ImmutableSetWithValueEqualityTests.cs"/>
+        <Compile Include="ImmutableStackWithValueEqualityTests.cs"/>
+        <Compile Include="ReadOnlyDictionaryWithValueEqualityTests.cs"/>
+        <Compile Include="ReadOnlyListWithValueEqualityTests.cs"/>
+        <Compile Include="ReadOnlyQueueWithValueEqualityTests.cs"/>
+        <Compile Include="ReadOnlySetWithValueEqualityTests.cs"/>
+        <Compile Include="ReadOnlyStackWithValueEqualityTests.cs"/>
     </ItemGroup>
 
 </Project>
