@@ -1,10 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
+using TUnit.Mocks;
+using TUnit.Mocks.Arguments;
+using TUnit.Mocks.Generated;
+using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -258,77 +261,47 @@ public class ImmutableDictionaryWithValueEqualityTests
     }
 
     [Test]
-    public async Task Count_WhenDictionaryIsEmpty_ThenResultIs0()
+    public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Count.Returns(3);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int>())
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        int count = dictionary.Count;
-
-        // Assert
-        await Assert.That(count).IsEqualTo(0);
-    }
-
-    [Test]
-    public async Task Count_WhenDictionaryHasThreeItems_ThenResultIs3()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         int count = dictionary.Count;
 
         // Assert
         await Assert.That(count).IsEqualTo(3);
+        mock.Count.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task ContainsKey_WhenKeyIsPresent_ThenReturnsTrue()
+    public async Task ContainsKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.ContainsKey(Any<string>()).Returns(true);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         bool containsKey = dictionary.ContainsKey("b");
 
         // Assert
         await Assert.That(containsKey).IsTrue();
+        mock.ContainsKey("b").WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task ContainsKey_WhenKeyIsAbsent_ThenReturnsFalse()
+    public async Task TryGetValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.TryGetValue(Any<string>()).Returns(true).SetsOutValue(2);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        bool containsKey = dictionary.ContainsKey("z");
-
-        // Assert
-        await Assert.That(containsKey).IsFalse();
-    }
-
-    [Test]
-    public async Task TryGetValue_WhenKeyIsPresent_ThenReturnsTrueAndOutputsValue()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         bool found = dictionary.TryGetValue(key: "b", value: out int value);
@@ -339,106 +312,77 @@ public class ImmutableDictionaryWithValueEqualityTests
             await Assert.That(found).IsTrue();
             await Assert.That(value).IsEqualTo(2);
         }
+
+        mock.TryGetValue("b").WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task TryGetValue_WhenKeyIsAbsent_ThenReturnsFalse()
+    public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Item(Any<string>()).Returns(3);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        bool found = dictionary.TryGetValue(key: "z", value: out int value);
-
-        // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(found).IsFalse();
-            await Assert.That(value).IsEqualTo(0);
-        }
-    }
-
-    [Test]
-    public async Task Indexer_WhenKeyIsPresent_ThenReturnsValue()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         int value = dictionary["c"];
 
         // Assert
         await Assert.That(value).IsEqualTo(3);
+        mock.Item("c").WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Keys_WhenDictionaryHasThreeItems_ThenResultContainsAllKeys()
+    public async Task Keys_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        string[] keys = ["a", "b", "c"];
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Keys.Returns(keys);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
-        IEnumerable<string> keys = dictionary.Keys;
+        IEnumerable<string> result = dictionary.Keys;
 
         // Assert
-        await Assert.That(keys).IsEquivalentTo(["a", "b", "c"]);
+        await Assert.That(result).IsEquivalentTo(keys);
+        mock.Keys.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Values_WhenDictionaryHasThreeItems_ThenResultContainsAllValues()
+    public async Task Values_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        int[] values = [1, 2, 3];
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Values.Returns(values);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
-        IEnumerable<int> values = dictionary.Values;
+        IEnumerable<int> result = dictionary.Values;
 
         // Assert
-        await Assert.That(values).IsEquivalentTo([1, 2, 3]);
+        await Assert.That(result).IsEquivalentTo(values);
+        mock.Values.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Enumerator_WhenDictionaryIsEmpty_ThenNoElementsAreEnumerated()
+    public async Task Enumerator_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        List<KeyValuePair<string, int>> items =
+        [
+            new KeyValuePair<string, int>(key: "a", value: 1),
+            new KeyValuePair<string, int>(key: "b", value: 2),
+            new KeyValuePair<string, int>(key: "c", value: 3)
+        ];
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int>())
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        List<KeyValuePair<string, int>> result = [];
-
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (KeyValuePair<string, int> pair in dictionary)
-        {
-            result.Add(pair);
-        }
-
-        // Assert
-        await Assert.That(result).IsEmpty();
-    }
-
-    [Test]
-    public async Task Enumerator_WhenDictionaryHasThreeItems_ThenSameThreeElementsAreEnumerated()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         List<KeyValuePair<string, int>> result = [];
@@ -450,346 +394,222 @@ public class ImmutableDictionaryWithValueEqualityTests
         }
 
         // Assert
-        await Assert.That(result)
-            .IsEquivalentTo(
-            [
-                new KeyValuePair<string, int>(key: "a", value: 1),
-                new KeyValuePair<string, int>(key: "b", value: 2),
-                new KeyValuePair<string, int>(key: "c", value: 3)
-            ]);
+        await Assert.That(result).IsEquivalentTo(items);
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Clear_WhenDictionaryHasThreeItems_ThenResultIsEmptyAndOriginalIsUnchanged()
+    public async Task Clear_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int>());
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Clear().Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.Clear();
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(0);
-            await Assert.That(dictionary.Count).IsEqualTo(3);
-        }
+        await Assert.That(result.Count).IsEqualTo(0);
+        mock.Clear().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Add_WhenKeyIsNew_ThenResultHasNewKeyAndOriginalIsUnchanged()
+    public async Task Add_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 1, ["d"] = 4 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Add(Any<string>(), Any<int>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.Add(key: "d", value: 4);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(4);
-            await Assert.That(result["d"]).IsEqualTo(4);
-            await Assert.That(dictionary.Count).IsEqualTo(3);
-            await Assert.That(dictionary.ContainsKey("d")).IsFalse();
-        }
+        await Assert.That(result["d"]).IsEqualTo(4);
+        mock.Add("d", 4).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Add_WhenKeyExistsWithDifferentValue_ThenThrowsArgumentException()
+    public async Task AddRange_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        KeyValuePair<string, int>[] pairs =
+        [
+            new KeyValuePair<string, int>(key: "d", value: 4), new KeyValuePair<string, int>(key: "e", value: 5)
+        ];
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["d"] = 4, ["e"] = 5 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.AddRange(Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act & Assert
-        await Assert.That(() => dictionary.Add(key: "a", value: 999)).Throws<ArgumentException>();
-    }
-
-    [Test]
-    public async Task AddRange_WhenPairsAreNew_ThenResultHasAllPairsAndOriginalIsUnchanged()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
-        IImmutableDictionaryWithValueEquality<string, int> result =
-            dictionary.AddRange(
-                [new KeyValuePair<string, int>(key: "d", value: 4), new KeyValuePair<string, int>(key: "e", value: 5)]);
+        IImmutableDictionaryWithValueEquality<string, int> result = dictionary.AddRange(pairs);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(5);
-            await Assert.That(result["d"]).IsEqualTo(4);
-            await Assert.That(result["e"]).IsEqualTo(5);
-            await Assert.That(dictionary.Count).IsEqualTo(3);
-        }
+        await Assert.That(result.Count).IsEqualTo(2);
+        mock.AddRange(pairs).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task SetItem_WhenKeyIsNew_ThenResultHasNewKeyAndOriginalIsUnchanged()
+    public async Task SetItem_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 100 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.SetItem(Any<string>(), Any<int>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        IImmutableDictionaryWithValueEquality<string, int> result = dictionary.SetItem(key: "d", value: 4);
-
-        // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(4);
-            await Assert.That(result["d"]).IsEqualTo(4);
-            await Assert.That(dictionary.Count).IsEqualTo(3);
-            await Assert.That(dictionary.ContainsKey("d")).IsFalse();
-        }
-    }
-
-    [Test]
-    public async Task SetItem_WhenKeyExists_ThenResultHasOverwrittenValueAndOriginalIsUnchanged()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.SetItem(key: "a", value: 100);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(3);
-            await Assert.That(result["a"]).IsEqualTo(100);
-            await Assert.That(dictionary["a"]).IsEqualTo(1);
-        }
+        await Assert.That(result["a"]).IsEqualTo(100);
+        mock.SetItem("a", 100).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task SetItems_WhenItemsIncludeNewAndExistingKeys_ThenResultIsUpdatedAndOriginalIsUnchanged()
+    public async Task SetItems_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        KeyValuePair<string, int>[] items =
+        [
+            new KeyValuePair<string, int>(key: "a", value: 111), new KeyValuePair<string, int>(key: "d", value: 4)
+        ];
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 111, ["d"] = 4 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.SetItems(Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
-        IImmutableDictionaryWithValueEquality<string, int> result =
-            dictionary.SetItems(
-            [
-                new KeyValuePair<string, int>(key: "a", value: 111), new KeyValuePair<string, int>(key: "d", value: 4)
-            ]);
+        IImmutableDictionaryWithValueEquality<string, int> result = dictionary.SetItems(items);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(4);
-            await Assert.That(result["a"]).IsEqualTo(111);
-            await Assert.That(result["d"]).IsEqualTo(4);
-            await Assert.That(dictionary["a"]).IsEqualTo(1);
-            await Assert.That(dictionary.ContainsKey("d")).IsFalse();
-        }
+        await Assert.That(result["a"]).IsEqualTo(111);
+        mock.SetItems(items).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task RemoveRange_WhenKeysExist_ThenResultHasKeysRemovedAndOriginalIsUnchanged()
+    public async Task RemoveRange_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        string[] keys = ["a", "b"];
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["c"] = 3 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.RemoveRange(Any<IEnumerable<string>>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
-        IImmutableDictionaryWithValueEquality<string, int> result = dictionary.RemoveRange(["a", "b"]);
+        IImmutableDictionaryWithValueEquality<string, int> result = dictionary.RemoveRange(keys);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(1);
-            await Assert.That(result.ContainsKey("c")).IsTrue();
-            await Assert.That(dictionary.Count).IsEqualTo(3);
-        }
+        await Assert.That(result.Count).IsEqualTo(1);
+        mock.RemoveRange(keys).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Remove_WhenKeyExists_ThenResultHasKeyRemovedAndOriginalIsUnchanged()
+    public async Task Remove_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 1, ["c"] = 3 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Remove(Any<string>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.Remove("b");
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(2);
-            await Assert.That(result.ContainsKey("b")).IsFalse();
-            await Assert.That(dictionary.Count).IsEqualTo(3);
-            await Assert.That(dictionary.ContainsKey("b")).IsTrue();
-        }
+        await Assert.That(result.ContainsKey("b")).IsFalse();
+        mock.Remove("b").WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Remove_WhenKeyIsAbsent_ThenResultHasSameContentsAsOriginal()
+    public async Task Contains_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        KeyValuePair<string, int> pair = new(key: "a", value: 1);
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Contains(Any<KeyValuePair<string, int>>()).Returns(true);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
-        IImmutableDictionaryWithValueEquality<string, int> result = dictionary.Remove("z");
-
-        // Assert
-        await Assert.That(result.Equals(dictionary)).IsTrue();
-    }
-
-    [Test]
-    public async Task Contains_WhenPairMatches_ThenReturnsTrue()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        bool contains = dictionary.Contains(new KeyValuePair<string, int>(key: "a", value: 1));
+        bool contains = dictionary.Contains(pair);
 
         // Assert
         await Assert.That(contains).IsTrue();
+        mock.Contains(pair).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Contains_WhenKeyIsPresentButValueDiffers_ThenReturnsFalse()
+    public async Task TryGetKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.TryGetKey(Any<string>()).Returns(true);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+            mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
-        bool contains = dictionary.Contains(new KeyValuePair<string, int>(key: "a", value: 999));
+        bool found = dictionary.TryGetKey(equalKey: "a", actualKey: out string _);
 
         // Assert
-        await Assert.That(contains).IsFalse();
+        await Assert.That(found).IsTrue();
+        mock.TryGetKey("a").WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Contains_WhenKeyIsAbsent_ThenReturnsFalse()
+    public async Task ImmutableDictionaryAdd_WhenCalledThroughBaseInterface_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        bool contains = dictionary.Contains(new KeyValuePair<string, int>(key: "z", value: 1));
-
-        // Assert
-        await Assert.That(contains).IsFalse();
-    }
-
-    [Test]
-    public async Task TryGetKey_WhenKeyExists_ThenReturnsTrueAndOutputsKey()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        bool found = dictionary.TryGetKey(equalKey: "a", actualKey: out string actualKey);
-
-        // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(found).IsTrue();
-            await Assert.That(actualKey).IsEqualTo("a");
-        }
-    }
-
-    [Test]
-    public async Task TryGetKey_WhenKeyIsAbsent_ThenReturnsFalse()
-    {
-        // Arrange
-        IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
-
-        // Act
-        bool found = dictionary.TryGetKey(equalKey: "z", actualKey: out string _);
-
-        // Assert
-        await Assert.That(found).IsFalse();
-    }
-
-    [Test]
-    public async Task ImmutableDictionaryAdd_WhenCalledThroughBaseInterface_ThenResultHasNewKey()
-    {
-        // Arrange
-        IImmutableDictionary<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["d"] = 4 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.Add(Any<string>(), Any<int>()).Returns(returnedDictionary);
+        IImmutableDictionary<string, int> dictionary = mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionary<string, int> result = dictionary.Add(key: "d", value: 4);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Count).IsEqualTo(4);
-            await Assert.That(result["d"]).IsEqualTo(4);
-            await Assert.That(dictionary.Count).IsEqualTo(3);
-        }
+        await Assert.That(result["d"]).IsEqualTo(4);
+        mock.Add("d", 4).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task ImmutableDictionarySetItem_WhenCalledThroughBaseInterface_ThenResultHasOverwrittenValue()
+    public async Task
+        ImmutableDictionarySetItem_WhenCalledThroughBaseInterface_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        IImmutableDictionary<string, int> dictionary =
-            ImmutableDictionary
-                .CreateRange(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2, ["c"] = 3 })
-                .ToImmutableDictionaryWithValueEquality();
+        IImmutableDictionary<string, int> returnedDictionary =
+            ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 100 });
+        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        mock.SetItem(Any<string>(), Any<int>()).Returns(returnedDictionary);
+        IImmutableDictionary<string, int> dictionary = mock.Object.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionary<string, int> result = dictionary.SetItem(key: "a", value: 100);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result["a"]).IsEqualTo(100);
-            await Assert.That(dictionary["a"]).IsEqualTo(1);
-        }
+        await Assert.That(result["a"]).IsEqualTo(100);
+        mock.SetItem("a", 100).WasCalled(Times.Once);
     }
 
     private record Record(IImmutableDictionaryWithValueEquality<string, int> Dictionary);

@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
+using TUnit.Mocks;
+using TUnit.Mocks.Arguments;
+using TUnit.Mocks.Generated;
+using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -187,51 +191,45 @@ public class ReadOnlyListWithValueEqualityTests
     }
 
     [Test]
-    public async Task Count_WhenListIsEmpty_ThenResultIs0()
+    public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyListWithValueEquality<int> list = [];
-
-        // Act
-        int count = list.Count;
-
-        // Assert
-        await Assert.That(count).IsEqualTo(0);
-    }
-
-    [Test]
-    public async Task Count_WhenListHasThreeItems_ThenResultIs3()
-    {
-        // Arrange
-        IReadOnlyListWithValueEquality<int> list = [1, 2, 3];
+        Mock<IReadOnlyList<int>> mock = Mock.Of<IReadOnlyList<int>>();
+        mock.Count.Returns(3);
+        IReadOnlyListWithValueEquality<int> list = mock.Object.ToReadOnlyListWithValueEquality();
 
         // Act
         int count = list.Count;
 
         // Assert
         await Assert.That(count).IsEqualTo(3);
+        mock.Count.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Indexer_WhenListHasSecondItemOf4_ThenIndex1Is4()
+    public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        IReadOnlyListWithValueEquality<int> list = [3, 4, 5];
+        Mock<IReadOnlyList<int>> mock = Mock.Of<IReadOnlyList<int>>();
+        mock.Item(Any<int>()).Returns(4);
+        IReadOnlyListWithValueEquality<int> list = mock.Object.ToReadOnlyListWithValueEquality();
 
         // Act
         int item = list[1];
 
         // Assert
         await Assert.That(item).IsEqualTo(4);
+        mock.Item(1).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Enumerator_WhenListIsEmpty_ThenNoElementsAreEnumerated()
+    public async Task Enumerator_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyListWithValueEquality<int> list = [];
+        List<int> items = [1, 2, 3];
+        Mock<IReadOnlyList<int>> mock = Mock.Of<IReadOnlyList<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IReadOnlyListWithValueEquality<int> list = mock.Object.ToReadOnlyListWithValueEquality();
 
         // Act
         List<int> result = [];
@@ -243,27 +241,8 @@ public class ReadOnlyListWithValueEqualityTests
         }
 
         // Assert
-        await Assert.That(result).IsEmpty();
-    }
-
-    [Test]
-    public async Task Enumerator_WhenListHasThreeItems_ThenSameThreeElementsAreEnumerated()
-    {
-        // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlyListWithValueEquality<int> list = [1, 2, 3];
-
-        // Act
-        List<int> result = [];
-
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (int item in list)
-        {
-            result.Add(item);
-        }
-
-        // Assert
-        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
+        await Assert.That(result).IsEquivalentTo(items);
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     private record Record(IReadOnlyListWithValueEquality<int> List);

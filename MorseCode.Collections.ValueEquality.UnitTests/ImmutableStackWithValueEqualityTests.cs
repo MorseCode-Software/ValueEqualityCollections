@@ -1,10 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
+using TUnit.Mocks;
+using TUnit.Mocks.Arguments;
+using TUnit.Mocks.Generated;
+using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -191,61 +195,45 @@ public class ImmutableStackWithValueEqualityTests
     }
 
     [Test]
-    public async Task IsEmpty_WhenStackIsEmpty_ThenReturnsTrue()
+    public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableStackWithValueEquality<int> stack = [];
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.IsEmpty.Returns(true);
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         bool isEmpty = stack.IsEmpty;
 
         // Assert
         await Assert.That(isEmpty).IsTrue();
+        mock.IsEmpty.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IsEmpty_WhenStackHasItems_ThenReturnsFalse()
+    public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
-
-        // Act
-        bool isEmpty = stack.IsEmpty;
-
-        // Assert
-        await Assert.That(isEmpty).IsFalse();
-    }
-
-    [Test]
-    public async Task Peek_WhenStackHasItems_ThenReturnsTopItem()
-    {
-        // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Peek().Returns(3);
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         int item = stack.Peek();
 
         // Assert
         await Assert.That(item).IsEqualTo(3);
+        mock.Peek().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Peek_WhenStackIsEmpty_ThenThrowsInvalidOperationException()
+    public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableStackWithValueEquality<int> stack = [];
-
-        // Act & Assert
-        await Assert.That(() => stack.Peek()).Throws<InvalidOperationException>();
-    }
-
-    [Test]
-    public async Task TryPeek_WhenStackHasItems_ThenReturnsTrueAndTopItem()
-    {
-        // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.IsEmpty.Returns(false);
+        mock.Peek().Returns(3);
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         bool found = stack.TryPeek(out int result);
@@ -256,92 +244,53 @@ public class ImmutableStackWithValueEqualityTests
             await Assert.That(found).IsTrue();
             await Assert.That(result).IsEqualTo(3);
         }
+
+        mock.IsEmpty.WasCalled(Times.Once);
+        mock.Peek().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task TryPeek_WhenStackIsEmpty_ThenReturnsFalse()
+    public async Task Contains_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableStackWithValueEquality<int> stack = [];
-
-        // Act
-        bool found = stack.TryPeek(out int result);
-
-        // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(found).IsFalse();
-            await Assert.That(result).IsEqualTo(0);
-        }
-    }
-
-    [Test]
-    public async Task Contains_WhenItemIsInStack_ThenReturnsTrue()
-    {
-        // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
+        List<int> items = [3, 2, 1];
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         bool contains = stack.Contains(2);
 
         // Assert
         await Assert.That(contains).IsTrue();
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Contains_WhenItemIsNotInStack_ThenReturnsFalse()
+    public async Task ToArray_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
-
-        // Act
-        bool contains = stack.Contains(5);
-
-        // Assert
-        await Assert.That(contains).IsFalse();
-    }
-
-    [Test]
-    public async Task ToArray_WhenStackIsEmpty_ThenResultIsEmpty()
-    {
-        // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableStackWithValueEquality<int> stack = [];
+        List<int> items = [3, 2, 1];
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         int[] array = stack.ToArray();
 
         // Assert
-        await Assert.That(array).IsEmpty();
+        await Assert.That(array).IsEquivalentTo(items);
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task ToArray_WhenStackHasThreeItems_ThenResultIsInTopToBottomOrder()
+    public async Task Enumerator_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
-
-        // Act
-        int[] array = stack.ToArray();
-
-        // Assert
-        await Assert.That(array.Length).IsEqualTo(3);
-
-        using (Assert.Multiple())
-        {
-            await Assert.That(array[0]).IsEqualTo(3);
-            await Assert.That(array[1]).IsEqualTo(2);
-            await Assert.That(array[2]).IsEqualTo(1);
-        }
-    }
-
-    [Test]
-    public async Task Enumerator_WhenStackIsEmpty_ThenNoElementsAreEnumerated()
-    {
-        // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableStackWithValueEquality<int> stack = [];
+        List<int> items = [3, 2, 1];
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         List<int> result = [];
@@ -353,172 +302,129 @@ public class ImmutableStackWithValueEqualityTests
         }
 
         // Assert
-        await Assert.That(result).IsEmpty();
+        await Assert.That(result).IsEquivalentTo(items);
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Enumerator_WhenStackHasThreeItems_ThenElementsAreEnumeratedInTopToBottomOrder()
+    public async Task Clear_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
-
-        // Act
-        List<int> result = [];
-
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (int item in stack)
-        {
-            result.Add(item);
-        }
-
-        // Assert
-        await Assert.That(result.Count).IsEqualTo(3);
-
-        using (Assert.Multiple())
-        {
-            await Assert.That(result[0]).IsEqualTo(3);
-            await Assert.That(result[1]).IsEqualTo(2);
-            await Assert.That(result[2]).IsEqualTo(1);
-        }
-    }
-
-    [Test]
-    public async Task Clear_WhenStackHasItems_ThenResultIsEmptyAndOriginalIsUnchanged()
-    {
-        // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
+        IImmutableStack<int> returnedStack = ImmutableStack.Create<int>();
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Clear().Returns(returnedStack);
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Clear();
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.IsEmpty).IsTrue();
-            await Assert.That(stack.IsEmpty).IsFalse();
-            await Assert.That(stack.Peek()).IsEqualTo(3);
-        }
+        await Assert.That(result.IsEmpty).IsTrue();
+        mock.Clear().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Push_WhenPushingItem_ThenNewItemIsOnTopAndOldTopIsAccessibleUnderneathAndOriginalIsUnchanged()
+    public async Task Push_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
+        IImmutableStack<int> returnedStack = ImmutableStack.Create(4, 3, 2, 1);
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Push(Any<int>()).Returns(returnedStack);
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Push(4);
 
         // Assert
-        int[] resultArray = result.ToArray();
-        int[] stackArray = stack.ToArray();
-
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.Peek()).IsEqualTo(4);
-            await Assert.That(result.Pop().Peek()).IsEqualTo(3);
-            await Assert.That(stack.Peek()).IsEqualTo(3);
-            await Assert.That(resultArray[0]).IsEqualTo(4);
-            await Assert.That(resultArray[1]).IsEqualTo(3);
-            await Assert.That(resultArray[2]).IsEqualTo(2);
-            await Assert.That(resultArray[3]).IsEqualTo(1);
-            await Assert.That(stackArray[0]).IsEqualTo(3);
-            await Assert.That(stackArray[1]).IsEqualTo(2);
-            await Assert.That(stackArray[2]).IsEqualTo(1);
-        }
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        mock.Push(4).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Pop_WhenStackHasItems_ThenReturnsStackMissingTopItemAndOriginalIsUnchanged()
+    public async Task Pop_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
+        IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Pop().Returns(returnedStack);
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Pop();
 
         // Assert
-        int[] resultArray = result.ToArray();
-        int[] stackArray = stack.ToArray();
-
-        using (Assert.Multiple())
-        {
-            await Assert.That(resultArray[0]).IsEqualTo(2);
-            await Assert.That(resultArray[1]).IsEqualTo(1);
-            await Assert.That(stackArray[0]).IsEqualTo(3);
-            await Assert.That(stackArray[1]).IsEqualTo(2);
-            await Assert.That(stackArray[2]).IsEqualTo(1);
-        }
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        mock.Pop().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Pop_WhenStackIsEmpty_ThenThrowsInvalidOperationException()
+    public async Task Pop_WithOutValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableStackWithValueEquality<int> stack = [];
-
-        // Act & Assert
-        await Assert.That(() => stack.Pop()).Throws<InvalidOperationException>();
-    }
-
-    [Test]
-    public async Task Pop_WithOutValue_WhenStackHasItems_ThenReturnsPoppedValueAndNewStackAndOriginalIsUnchanged()
-    {
-        // Arrange
-        IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
+        IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Peek().Returns(3);
+        mock.Pop().Returns(returnedStack);
+        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Pop(out int value);
 
         // Assert
-        int[] resultArray = result.ToArray();
-        int[] stackArray = stack.ToArray();
-
         using (Assert.Multiple())
         {
             await Assert.That(value).IsEqualTo(3);
-            await Assert.That(resultArray[0]).IsEqualTo(2);
-            await Assert.That(resultArray[1]).IsEqualTo(1);
-            await Assert.That(stackArray[0]).IsEqualTo(3);
-            await Assert.That(stackArray[1]).IsEqualTo(2);
-            await Assert.That(stackArray[2]).IsEqualTo(1);
+            await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
         }
+
+        mock.Peek().WasCalled(Times.Once);
+        mock.Pop().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task CastToIImmutableStack_Push_WhenPushingItem_ThenNewItemIsOnTop()
+    public async Task CastToIImmutableStack_Push_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stackWithValueEquality = [1, 2, 3];
+        IImmutableStack<int> returnedStack = ImmutableStack.Create(4, 3, 2, 1);
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Push(Any<int>()).Returns(returnedStack);
+        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.Object.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
 
         // Act
         IImmutableStack<int> result = stack.Push(4);
 
         // Assert
-        await Assert.That(result.Peek()).IsEqualTo(4);
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        mock.Push(4).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task CastToIImmutableStack_Pop_WhenStackHasItems_ThenReturnsStackMissingTopItem()
+    public async Task CastToIImmutableStack_Pop_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stackWithValueEquality = [1, 2, 3];
+        IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Pop().Returns(returnedStack);
+        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.Object.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
 
         // Act
         IImmutableStack<int> result = stack.Pop();
 
         // Assert
-        await Assert.That(result.Peek()).IsEqualTo(2);
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        mock.Pop().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task CastToIImmutableStack_Clear_WhenStackHasItems_ThenResultIsEmpty()
+    public async Task CastToIImmutableStack_Clear_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        IImmutableStackWithValueEquality<int> stackWithValueEquality = [1, 2, 3];
+        IImmutableStack<int> returnedStack = ImmutableStack.Create<int>();
+        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        mock.Clear().Returns(returnedStack);
+        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.Object.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
 
         // Act
@@ -526,6 +432,7 @@ public class ImmutableStackWithValueEqualityTests
 
         // Assert
         await Assert.That(result.IsEmpty).IsTrue();
+        mock.Clear().WasCalled(Times.Once);
     }
 
     private record Record(IImmutableStackWithValueEquality<int> Stack);

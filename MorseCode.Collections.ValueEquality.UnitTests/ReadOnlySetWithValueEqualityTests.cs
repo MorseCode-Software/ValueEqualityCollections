@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
+using TUnit.Mocks;
+using TUnit.Mocks.Arguments;
+using TUnit.Mocks.Generated;
+using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -174,232 +178,147 @@ public class ReadOnlySetWithValueEqualityTests
     }
 
     [Test]
-    public async Task Count_WhenSetIsEmpty_ThenResultIs0()
+    public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlySetWithValueEquality<int> set = [];
-
-        // Act
-        int count = set.Count;
-
-        // Assert
-        await Assert.That(count).IsEqualTo(0);
-    }
-
-    [Test]
-    public async Task Count_WhenSetHasThreeItems_ThenResultIs3()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.Count.Returns(3);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         int count = set.Count;
 
         // Assert
         await Assert.That(count).IsEqualTo(3);
+        mock.Count.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Contains_WhenItemIsInSet_ThenReturnsTrue()
+    public async Task Contains_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.Contains(Any<int>()).Returns(true);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         bool contains = set.Contains(2);
 
         // Assert
         await Assert.That(contains).IsTrue();
+        mock.Contains(2).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Contains_WhenItemIsNotInSet_ThenReturnsFalse()
+    public async Task IsProperSubsetOf_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
-
-        // Act
-        bool contains = set.Contains(5);
-
-        // Assert
-        await Assert.That(contains).IsFalse();
-    }
-
-    [Test]
-    public async Task IsProperSubsetOf_WhenSetIsProperSubsetOfOther_ThenReturnsTrue()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2];
         int[] other = [1, 2, 3];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.IsProperSubsetOf(Any<IEnumerable<int>>()).Returns(true);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isProperSubset = set.IsProperSubsetOf(other);
 
         // Assert
         await Assert.That(isProperSubset).IsTrue();
+        mock.IsProperSubsetOf(other).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IsProperSubsetOf_WhenSetIsNotProperSubsetOfOther_ThenReturnsFalse()
+    public async Task IsProperSupersetOf_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
-        int[] other = [1, 2, 3];
-
-        // Act
-        bool isProperSubset = set.IsProperSubsetOf(other);
-
-        // Assert
-        await Assert.That(isProperSubset).IsFalse();
-    }
-
-    [Test]
-    public async Task IsProperSupersetOf_WhenSetIsProperSupersetOfOther_ThenReturnsTrue()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
         int[] other = [1, 2];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.IsProperSupersetOf(Any<IEnumerable<int>>()).Returns(true);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isProperSuperset = set.IsProperSupersetOf(other);
 
         // Assert
         await Assert.That(isProperSuperset).IsTrue();
+        mock.IsProperSupersetOf(other).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IsProperSupersetOf_WhenSetIsNotProperSupersetOfOther_ThenReturnsFalse()
+    public async Task IsSubsetOf_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2];
         int[] other = [1, 2, 3];
-
-        // Act
-        bool isProperSuperset = set.IsProperSupersetOf(other);
-
-        // Assert
-        await Assert.That(isProperSuperset).IsFalse();
-    }
-
-    [Test]
-    public async Task IsSubsetOf_WhenSetIsSubsetOfOther_ThenReturnsTrue()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2];
-        int[] other = [1, 2, 3];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.IsSubsetOf(Any<IEnumerable<int>>()).Returns(true);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isSubset = set.IsSubsetOf(other);
 
         // Assert
         await Assert.That(isSubset).IsTrue();
+        mock.IsSubsetOf(other).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IsSubsetOf_WhenSetIsNotSubsetOfOther_ThenReturnsFalse()
+    public async Task IsSupersetOf_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 4];
-        int[] other = [1, 2, 3];
-
-        // Act
-        bool isSubset = set.IsSubsetOf(other);
-
-        // Assert
-        await Assert.That(isSubset).IsFalse();
-    }
-
-    [Test]
-    public async Task IsSupersetOf_WhenSetIsSupersetOfOther_ThenReturnsTrue()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
         int[] other = [1, 2];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.IsSupersetOf(Any<IEnumerable<int>>()).Returns(true);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isSuperset = set.IsSupersetOf(other);
 
         // Assert
         await Assert.That(isSuperset).IsTrue();
+        mock.IsSupersetOf(other).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IsSupersetOf_WhenSetIsNotSupersetOfOther_ThenReturnsFalse()
+    public async Task Overlaps_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2];
-        int[] other = [1, 2, 3];
-
-        // Act
-        bool isSuperset = set.IsSupersetOf(other);
-
-        // Assert
-        await Assert.That(isSuperset).IsFalse();
-    }
-
-    [Test]
-    public async Task Overlaps_WhenSetSharesElementWithOther_ThenReturnsTrue()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
         int[] other = [3, 4, 5];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.Overlaps(Any<IEnumerable<int>>()).Returns(true);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         bool overlaps = set.Overlaps(other);
 
         // Assert
         await Assert.That(overlaps).IsTrue();
+        mock.Overlaps(other).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Overlaps_WhenSetSharesNoElementWithOther_ThenReturnsFalse()
+    public async Task SetEquals_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
-        int[] other = [4, 5, 6];
-
-        // Act
-        bool overlaps = set.Overlaps(other);
-
-        // Assert
-        await Assert.That(overlaps).IsFalse();
-    }
-
-    [Test]
-    public async Task SetEquals_WhenSetHasSameElementsAsOther_ThenReturnsTrue()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
         int[] other = [3, 2, 1];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.SetEquals(Any<IEnumerable<int>>()).Returns(true);
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         bool setEquals = set.SetEquals(other);
 
         // Assert
         await Assert.That(setEquals).IsTrue();
+        mock.SetEquals(other).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task SetEquals_WhenSetDoesNotHaveSameElementsAsOther_ThenReturnsFalse()
+    public async Task Enumerator_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
-        int[] other = [1, 2, 4];
-
-        // Act
-        bool setEquals = set.SetEquals(other);
-
-        // Assert
-        await Assert.That(setEquals).IsFalse();
-    }
-
-    [Test]
-    public async Task Enumerator_WhenSetIsEmpty_ThenNoElementsAreEnumerated()
-    {
-        // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IReadOnlySetWithValueEquality<int> set = [];
+        List<int> items = [1, 2, 3];
+        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
 
         // Act
         List<int> result = [];
@@ -411,26 +330,8 @@ public class ReadOnlySetWithValueEqualityTests
         }
 
         // Assert
-        await Assert.That(result).IsEmpty();
-    }
-
-    [Test]
-    public async Task Enumerator_WhenSetHasThreeItems_ThenSameThreeElementsAreEnumerated()
-    {
-        // Arrange
-        IReadOnlySetWithValueEquality<int> set = [1, 2, 3];
-
-        // Act
-        List<int> result = [];
-
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (int item in set)
-        {
-            result.Add(item);
-        }
-
-        // Assert
-        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
+        await Assert.That(result).IsEquivalentTo(items);
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     private record Record(IReadOnlySetWithValueEquality<int> Set);

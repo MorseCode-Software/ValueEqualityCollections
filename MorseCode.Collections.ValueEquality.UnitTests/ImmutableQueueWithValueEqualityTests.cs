@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -6,6 +5,10 @@ using System.Threading.Tasks;
 using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
+using TUnit.Mocks;
+using TUnit.Mocks.Arguments;
+using TUnit.Mocks.Generated;
+using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -175,61 +178,45 @@ public class ImmutableQueueWithValueEqualityTests
     }
 
     [Test]
-    public async Task IsEmpty_WhenQueueIsEmpty_ThenReturnsTrue()
+    public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableQueueWithValueEquality<int> queue = [];
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.IsEmpty.Returns(true);
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         bool isEmpty = queue.IsEmpty;
 
         // Assert
         await Assert.That(isEmpty).IsTrue();
+        mock.IsEmpty.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IsEmpty_WhenQueueHasThreeItems_ThenReturnsFalse()
+    public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
-
-        // Act
-        bool isEmpty = queue.IsEmpty;
-
-        // Assert
-        await Assert.That(isEmpty).IsFalse();
-    }
-
-    [Test]
-    public async Task Peek_WhenQueueHasThreeItems_ThenReturnsFirstEnqueuedItem()
-    {
-        // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Peek().Returns(1);
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         int item = queue.Peek();
 
         // Assert
         await Assert.That(item).IsEqualTo(1);
+        mock.Peek().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Peek_WhenQueueIsEmpty_ThenThrowsInvalidOperationException()
+    public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableQueueWithValueEquality<int> queue = [];
-
-        // Act & Assert
-        await Assert.That(() => queue.Peek()).Throws<InvalidOperationException>();
-    }
-
-    [Test]
-    public async Task TryPeek_WhenQueueHasThreeItems_ThenReturnsTrueAndFirstEnqueuedItem()
-    {
-        // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.IsEmpty.Returns(false);
+        mock.Peek().Returns(1);
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         bool found = queue.TryPeek(out int item);
@@ -240,85 +227,53 @@ public class ImmutableQueueWithValueEqualityTests
             await Assert.That(found).IsTrue();
             await Assert.That(item).IsEqualTo(1);
         }
+
+        mock.IsEmpty.WasCalled(Times.Once);
+        mock.Peek().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task TryPeek_WhenQueueIsEmpty_ThenReturnsFalse()
+    public async Task Contains_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableQueueWithValueEquality<int> queue = [];
-
-        // Act
-        bool found = queue.TryPeek(out int item);
-
-        // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(found).IsFalse();
-            await Assert.That(item).IsEqualTo(0);
-        }
-    }
-
-    [Test]
-    public async Task Contains_WhenItemIsInQueue_ThenReturnsTrue()
-    {
-        // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
+        List<int> items = [1, 2, 3];
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         bool contains = queue.Contains(2);
 
         // Assert
         await Assert.That(contains).IsTrue();
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Contains_WhenItemIsNotInQueue_ThenReturnsFalse()
+    public async Task ToArray_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
-
-        // Act
-        bool contains = queue.Contains(4);
-
-        // Assert
-        await Assert.That(contains).IsFalse();
-    }
-
-    [Test]
-    public async Task ToArray_WhenQueueIsEmpty_ThenResultIsEmpty()
-    {
-        // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableQueueWithValueEquality<int> queue = [];
+        List<int> items = [1, 2, 3];
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         int[] result = queue.ToArray();
 
         // Assert
-        await Assert.That(result).IsEmpty();
+        await Assert.That(result).IsEquivalentTo(items);
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task ToArray_WhenQueueHasThreeItems_ThenResultHasSameThreeItemsInOrder()
+    public async Task Enumerator_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
-
-        // Act
-        int[] result = queue.ToArray();
-
-        // Assert
-        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
-    }
-
-    [Test]
-    public async Task Enumerator_WhenQueueIsEmpty_ThenNoElementsAreEnumerated()
-    {
-        // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableQueueWithValueEquality<int> queue = [];
+        List<int> items = [1, 2, 3];
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.GetEnumerator().Returns(items.GetEnumerator());
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         List<int> result = [];
@@ -330,96 +285,70 @@ public class ImmutableQueueWithValueEqualityTests
         }
 
         // Assert
-        await Assert.That(result).IsEmpty();
+        await Assert.That(result).IsEquivalentTo(items);
+        mock.GetEnumerator().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Enumerator_WhenQueueHasThreeItems_ThenSameThreeElementsAreEnumeratedInOrder()
+    public async Task Clear_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
-
-        // Act
-        List<int> result = [];
-
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (int item in queue)
-        {
-            result.Add(item);
-        }
-
-        // Assert
-        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
-    }
-
-    [Test]
-    public async Task Clear_WhenQueueHasThreeItems_ThenResultIsEmptyAndOriginalIsUnchanged()
-    {
-        // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
+        IImmutableQueue<int> returnedQueue = ImmutableQueue<int>.Empty;
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Clear().Returns(returnedQueue);
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Clear();
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.IsEmpty).IsTrue();
-            await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
-        }
+        await Assert.That(result.IsEmpty).IsTrue();
+        mock.Clear().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Enqueue_WhenQueueHasThreeItems_ThenResultHasFourItemsAndOriginalIsUnchanged()
+    public async Task Enqueue_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
+        IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(1, 2, 3, 4);
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Enqueue(Any<int>()).Returns(returnedQueue);
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Enqueue(4);
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.ToArray()).IsEquivalentTo([1, 2, 3, 4]);
-            await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
-        }
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        mock.Enqueue(4).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Dequeue_WhenQueueHasThreeItems_ThenResultHasRemainingItemsAndOriginalIsUnchanged()
+    public async Task Dequeue_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
+        IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Dequeue().Returns(returnedQueue);
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Dequeue();
 
         // Assert
-        using (Assert.Multiple())
-        {
-            await Assert.That(result.ToArray()).IsEquivalentTo([2, 3]);
-            await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
-        }
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        mock.Dequeue().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task Dequeue_WhenQueueIsEmpty_ThenThrowsInvalidOperationException()
+    public async Task DequeueOutValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableQueueWithValueEquality<int> queue = [];
-
-        // Act & Assert
-        await Assert.That(() => queue.Dequeue()).Throws<InvalidOperationException>();
-    }
-
-    [Test]
-    public async Task
-        DequeueOutValue_WhenQueueHasThreeItems_ThenReturnsFirstEnqueuedItemAndRemainingQueueAndOriginalIsUnchanged()
-    {
-        // Arrange
-        IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
+        IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Peek().Returns(1);
+        mock.Dequeue().Returns(returnedQueue);
+        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Dequeue(out int value);
@@ -428,27 +357,20 @@ public class ImmutableQueueWithValueEqualityTests
         using (Assert.Multiple())
         {
             await Assert.That(value).IsEqualTo(1);
-            await Assert.That(result.ToArray()).IsEquivalentTo([2, 3]);
-            await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
+            await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
         }
+
+        mock.Peek().WasCalled(Times.Once);
+        mock.Dequeue().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task DequeueOutValue_WhenQueueIsEmpty_ThenThrowsInvalidOperationException()
+    public async Task IImmutableQueueIsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        // ReSharper disable once CollectionNeverUpdated.Local
-        IImmutableQueueWithValueEquality<int> queue = [];
-
-        // Act & Assert
-        await Assert.That(() => queue.Dequeue(out int _)).Throws<InvalidOperationException>();
-    }
-
-    [Test]
-    public async Task IImmutableQueueIsEmpty_WhenQueueHasThreeItems_ThenReturnsFalse()
-    {
-        // Arrange
-        IImmutableQueueWithValueEquality<int> source = [1, 2, 3];
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.IsEmpty.Returns(false);
+        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act
@@ -456,41 +378,53 @@ public class ImmutableQueueWithValueEqualityTests
 
         // Assert
         await Assert.That(isEmpty).IsFalse();
+        mock.IsEmpty.WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IImmutableQueueEnqueue_WhenQueueHasThreeItems_ThenResultHasFourItems()
+    public async Task IImmutableQueueEnqueue_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> source = [1, 2, 3];
+        IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(1, 2, 3, 4);
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Enqueue(Any<int>()).Returns(returnedQueue);
+        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act
         IImmutableQueue<int> result = queue.Enqueue(4);
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo([1, 2, 3, 4]);
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        mock.Enqueue(4).WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IImmutableQueueDequeue_WhenQueueHasThreeItems_ThenResultHasRemainingItems()
+    public async Task IImmutableQueueDequeue_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> source = [1, 2, 3];
+        IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Dequeue().Returns(returnedQueue);
+        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act
         IImmutableQueue<int> result = queue.Dequeue();
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo([2, 3]);
+        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        mock.Dequeue().WasCalled(Times.Once);
     }
 
     [Test]
-    public async Task IImmutableQueueClear_WhenQueueHasThreeItems_ThenResultIsEmpty()
+    public async Task IImmutableQueueClear_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        IImmutableQueueWithValueEquality<int> source = [1, 2, 3];
+        IImmutableQueue<int> returnedQueue = ImmutableQueue<int>.Empty;
+        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        mock.Clear().Returns(returnedQueue);
+        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act
@@ -498,6 +432,7 @@ public class ImmutableQueueWithValueEqualityTests
 
         // Assert
         await Assert.That(result.IsEmpty).IsTrue();
+        mock.Clear().WasCalled(Times.Once);
     }
 
     private record Record(IImmutableQueueWithValueEquality<int> Queue);
