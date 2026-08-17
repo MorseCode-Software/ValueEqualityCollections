@@ -8,9 +8,7 @@ using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
 using TUnit.Mocks;
-using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -38,7 +36,7 @@ public class FrozenStackWithValueEqualityTests
         IFrozenStackWithValueEquality<int> stack = [1, 2, 3];
 
         // Assert
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         using (Assert.Multiple())
         {
@@ -72,7 +70,7 @@ public class FrozenStackWithValueEqualityTests
         IFrozenStackWithValueEquality<int> stack = underlyingSequence.ToFrozenStackWithValueEquality();
 
         // Assert
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         using (Assert.Multiple())
         {
@@ -199,9 +197,11 @@ public class FrozenStackWithValueEqualityTests
     public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.IsEmpty.Returns(true);
-        IFrozenStackWithValueEquality<int> stack = CreateFrozenStackWithValueEquality(mock);
+
+        IFrozenStackWithValueEquality<int> stack =
+            FrozenStackWithValueEqualityTests.CreateFrozenStackWithValueEquality(mock);
 
         // Act
         bool isEmpty = stack.IsEmpty;
@@ -215,9 +215,11 @@ public class FrozenStackWithValueEqualityTests
     public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.Peek().Returns(3);
-        IFrozenStackWithValueEquality<int> stack = CreateFrozenStackWithValueEquality(mock);
+
+        IFrozenStackWithValueEquality<int> stack =
+            FrozenStackWithValueEqualityTests.CreateFrozenStackWithValueEquality(mock);
 
         // Act
         int item = stack.Peek();
@@ -231,10 +233,12 @@ public class FrozenStackWithValueEqualityTests
     public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.IsEmpty.Returns(false);
         mock.Peek().Returns(3);
-        IFrozenStackWithValueEquality<int> stack = CreateFrozenStackWithValueEquality(mock);
+
+        IFrozenStackWithValueEquality<int> stack =
+            FrozenStackWithValueEqualityTests.CreateFrozenStackWithValueEquality(mock);
 
         // Act
         bool found = stack.TryPeek(out int result);
@@ -255,9 +259,11 @@ public class FrozenStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenStackWithValueEquality<int> stack = CreateFrozenStackWithValueEquality(mock);
+
+        IFrozenStackWithValueEquality<int> stack =
+            FrozenStackWithValueEqualityTests.CreateFrozenStackWithValueEquality(mock);
 
         // Act
         bool contains = stack.Contains(2);
@@ -272,12 +278,14 @@ public class FrozenStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenStackWithValueEquality<int> stack = CreateFrozenStackWithValueEquality(mock);
+
+        IFrozenStackWithValueEquality<int> stack =
+            FrozenStackWithValueEqualityTests.CreateFrozenStackWithValueEquality(mock);
 
         // Act
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         // Assert
         await Assert.That(array).IsEquivalentTo(items);
@@ -289,9 +297,11 @@ public class FrozenStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenStackWithValueEquality<int> stack = CreateFrozenStackWithValueEquality(mock);
+
+        IFrozenStackWithValueEquality<int> stack =
+            FrozenStackWithValueEqualityTests.CreateFrozenStackWithValueEquality(mock);
 
         // Act
         List<int> result = [];
@@ -317,13 +327,18 @@ public class FrozenStackWithValueEqualityTests
         IImmutableStack<T> immutableStack,
         IEqualityComparer<T>? equalityComparer = null)
     {
-        Type openType = typeof(ValueEqualityCollectionFactory).GetNestedType(
-            name: "FrozenStackWithValueEquality`1",
-            bindingAttr: BindingFlags.NonPublic)!;
+        Type openType =
+            typeof(ValueEqualityCollectionFactory).GetNestedType(
+                name: "FrozenStackWithValueEquality`1",
+                bindingAttr: BindingFlags.NonPublic)!;
+
         Type closedType = openType.MakeGenericType(typeof(T));
-        ConstructorInfo constructor = closedType
-            .GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .Single();
+
+        ConstructorInfo constructor =
+            closedType
+                .GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Single();
+
         return (IFrozenStackWithValueEquality<T>)constructor.Invoke([immutableStack, equalityComparer]);
     }
 

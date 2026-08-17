@@ -8,7 +8,6 @@ using TUnit.Core;
 using TUnit.Mocks;
 using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -195,7 +194,7 @@ public class ImmutableListWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.Count.Returns(3);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
@@ -211,8 +210,8 @@ public class ImmutableListWithValueEqualityTests
     public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
-        mock.Item(Any<int>()).Returns(4);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.Item(Arg.Any<int>()).Returns(4);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -228,7 +227,7 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
@@ -251,7 +250,7 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList<int>.Empty;
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.Clear().Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
@@ -268,8 +267,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 2, 3, 4);
-        var mock = IImmutableList<int>.Mock();
-        mock.Add(Any<int>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.Add(Arg.Any<int>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -287,8 +286,8 @@ public class ImmutableListWithValueEqualityTests
         // Arrange
         int[] items = [4, 5];
         IImmutableList<int> returnedList = ImmutableList.Create(1, 2, 3, 4, 5);
-        var mock = IImmutableList<int>.Mock();
-        mock.AddRange(Any<IEnumerable<int>>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.AddRange(Arg.Any<IEnumerable<int>>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -304,8 +303,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 99, 2, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.Insert(Any<int>(), Any<int>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.Insert(index: Arg.Any<int>(), element: Arg.Any<int>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -314,7 +313,7 @@ public class ImmutableListWithValueEqualityTests
         // Assert
         await Assert.That(result.Count).IsEqualTo(4);
         await Assert.That(result[1]).IsEqualTo(99);
-        mock.Insert(1, 99).WasCalled(Times.Once);
+        mock.Insert(index: 1, element: 99).WasCalled(Times.Once);
     }
 
     [Test]
@@ -323,8 +322,8 @@ public class ImmutableListWithValueEqualityTests
         // Arrange
         int[] items = [97, 98];
         IImmutableList<int> returnedList = ImmutableList.Create(1, 97, 98, 2, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.InsertRange(Any<int>(), Any<IEnumerable<int>>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.InsertRange(index: Arg.Any<int>(), items: Arg.Any<IEnumerable<int>>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -332,7 +331,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result.Count).IsEqualTo(5);
-        mock.InsertRange(1, items).WasCalled(Times.Once);
+        mock.InsertRange(index: 1, items: items).WasCalled(Times.Once);
     }
 
     [Test]
@@ -340,8 +339,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.Remove(Any<int>(), Any<IEqualityComparer<int>?>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.Remove(value: Arg.Any<int>(), equalityComparer: Arg.Any<IEqualityComparer<int>?>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -350,7 +349,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result.Count).IsEqualTo(2);
-        mock.Remove(2, EqualityComparer<int>.Default).WasCalled(Times.Once);
+        mock.Remove(value: 2, equalityComparer: EqualityComparer<int>.Default).WasCalled(Times.Once);
     }
 
     [Test]
@@ -358,8 +357,11 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.Remove(Any<int>(), IsNull<IEqualityComparer<int>?>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.Remove(value: Arg.Any<int>(), equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .Returns(returnedList);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -367,7 +369,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result.Count).IsEqualTo(2);
-        mock.Remove(2, IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
+        mock.Remove(value: 2, equalityComparer: Arg.IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
     }
 
     [Test]
@@ -375,8 +377,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 3, 5);
-        var mock = IImmutableList<int>.Mock();
-        mock.RemoveAll(Any<Predicate<int>>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.RemoveAll(Arg.Any<Predicate<int>>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
         Predicate<int> match = x => x % 2 == 0;
 
@@ -394,8 +396,11 @@ public class ImmutableListWithValueEqualityTests
         // Arrange
         int[] items = [20, 40];
         IImmutableList<int> returnedList = ImmutableList.Create(10, 30, 50);
-        var mock = IImmutableList<int>.Mock();
-        mock.RemoveRange(Any<IEnumerable<int>>(), Any<IEqualityComparer<int>?>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.RemoveRange(items: Arg.Any<IEnumerable<int>>(), equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .Returns(returnedList);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -404,7 +409,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result.Count).IsEqualTo(3);
-        mock.RemoveRange(items, EqualityComparer<int>.Default).WasCalled(Times.Once);
+        mock.RemoveRange(items: items, equalityComparer: EqualityComparer<int>.Default).WasCalled(Times.Once);
     }
 
     [Test]
@@ -414,8 +419,11 @@ public class ImmutableListWithValueEqualityTests
         // Arrange
         int[] items = [20, 40];
         IImmutableList<int> returnedList = ImmutableList.Create(10, 30, 50);
-        var mock = IImmutableList<int>.Mock();
-        mock.RemoveRange(Any<IEnumerable<int>>(), IsNull<IEqualityComparer<int>?>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.RemoveRange(items: Arg.Any<IEnumerable<int>>(), equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .Returns(returnedList);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -423,7 +431,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result.Count).IsEqualTo(3);
-        mock.RemoveRange(items, IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
+        mock.RemoveRange(items: items, equalityComparer: Arg.IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
     }
 
     [Test]
@@ -431,8 +439,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 4, 5);
-        var mock = IImmutableList<int>.Mock();
-        mock.RemoveRange(Any<int>(), Any<int>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.RemoveRange(index: Arg.Any<int>(), count: Arg.Any<int>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -440,7 +448,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result.Count).IsEqualTo(3);
-        mock.RemoveRange(1, 2).WasCalled(Times.Once);
+        mock.RemoveRange(index: 1, count: 2).WasCalled(Times.Once);
     }
 
     [Test]
@@ -448,8 +456,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.RemoveAt(Any<int>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.RemoveAt(Arg.Any<int>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -465,8 +473,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 99, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.SetItem(Any<int>(), Any<int>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.SetItem(index: Arg.Any<int>(), value: Arg.Any<int>()).Returns(returnedList);
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -474,7 +482,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result[1]).IsEqualTo(99);
-        mock.SetItem(1, 99).WasCalled(Times.Once);
+        mock.SetItem(index: 1, value: 99).WasCalled(Times.Once);
     }
 
     [Test]
@@ -482,8 +490,14 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 99, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.Replace(Any<int>(), Any<int>(), Any<IEqualityComparer<int>?>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.Replace(
+                oldValue: Arg.Any<int>(),
+                newValue: Arg.Any<int>(),
+                equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .Returns(returnedList);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -492,7 +506,7 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result[1]).IsEqualTo(99);
-        mock.Replace(2, 99, EqualityComparer<int>.Default).WasCalled(Times.Once);
+        mock.Replace(oldValue: 2, newValue: 99, equalityComparer: EqualityComparer<int>.Default).WasCalled(Times.Once);
     }
 
     [Test]
@@ -500,8 +514,14 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 99, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.Replace(Any<int>(), Any<int>(), IsNull<IEqualityComparer<int>?>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.Replace(
+                oldValue: Arg.Any<int>(),
+                newValue: Arg.Any<int>(),
+                equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .Returns(returnedList);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -509,15 +529,24 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(result[1]).IsEqualTo(99);
-        mock.Replace(2, 99, IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
+
+        mock.Replace(oldValue: 2, newValue: 99, equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .WasCalled(Times.Once);
     }
 
     [Test]
     public async Task IndexOf_WithIndexCountAndEqualityComparer_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
-        mock.IndexOf(Any<int>(), Any<int>(), Any<int>(), Any<IEqualityComparer<int>?>()).Returns(2);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.IndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .Returns(2);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -525,15 +554,24 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(index).IsEqualTo(2);
-        mock.IndexOf(5, 2, 2, EqualityComparer<int>.Default).WasCalled(Times.Once);
+
+        mock.IndexOf(item: 5, index: 2, count: 2, equalityComparer: EqualityComparer<int>.Default)
+            .WasCalled(Times.Once);
     }
 
     [Test]
     public async Task IndexOf_WithStartIndexAndCount_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
-        mock.IndexOf(Any<int>(), Any<int>(), Any<int>(), IsNull<IEqualityComparer<int>?>()).Returns(2);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.IndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .Returns(2);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -541,16 +579,25 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(index).IsEqualTo(2);
-        mock.IndexOf(5, 2, 2, IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
+
+        mock.IndexOf(item: 5, index: 2, count: 2, equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .WasCalled(Times.Once);
     }
 
     [Test]
     public async Task IndexOf_WithStartIndex_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.Count.Returns(10);
-        mock.IndexOf(Any<int>(), Any<int>(), Any<int>(), IsNull<IEqualityComparer<int>?>()).Returns(4);
+
+        mock.IndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .Returns(4);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -559,16 +606,25 @@ public class ImmutableListWithValueEqualityTests
         // Assert
         await Assert.That(index).IsEqualTo(4);
         mock.Count.WasCalled(Times.AtLeastOnce);
-        mock.IndexOf(5, 3, 7, IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
+
+        mock.IndexOf(item: 5, index: 3, count: 7, equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .WasCalled(Times.Once);
     }
 
     [Test]
     public async Task IndexOf_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.Count.Returns(10);
-        mock.IndexOf(Any<int>(), Any<int>(), Any<int>(), Any<IEqualityComparer<int>?>()).Returns(0);
+
+        mock.IndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .Returns(0);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -577,7 +633,13 @@ public class ImmutableListWithValueEqualityTests
         // Assert
         await Assert.That(index).IsEqualTo(0);
         mock.Count.WasCalled(Times.AtLeastOnce);
-        mock.IndexOf(5, Any<int>(), Any<int>(), Any<IEqualityComparer<int>?>()).WasCalled(Times.AtLeastOnce);
+
+        mock.IndexOf(
+                item: 5,
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .WasCalled(Times.AtLeastOnce);
     }
 
     [Test]
@@ -585,8 +647,15 @@ public class ImmutableListWithValueEqualityTests
         LastIndexOf_WithIndexCountAndEqualityComparer_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
-        mock.LastIndexOf(Any<int>(), Any<int>(), Any<int>(), Any<IEqualityComparer<int>?>()).Returns(4);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.LastIndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .Returns(4);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -594,15 +663,24 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(index).IsEqualTo(4);
-        mock.LastIndexOf(5, 4, 2, EqualityComparer<int>.Default).WasCalled(Times.Once);
+
+        mock.LastIndexOf(item: 5, index: 4, count: 2, equalityComparer: EqualityComparer<int>.Default)
+            .WasCalled(Times.Once);
     }
 
     [Test]
     public async Task LastIndexOf_WithStartIndexAndCount_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
-        mock.LastIndexOf(Any<int>(), Any<int>(), Any<int>(), IsNull<IEqualityComparer<int>?>()).Returns(4);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+
+        mock.LastIndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .Returns(4);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -610,16 +688,25 @@ public class ImmutableListWithValueEqualityTests
 
         // Assert
         await Assert.That(index).IsEqualTo(4);
-        mock.LastIndexOf(5, 4, 2, IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
+
+        mock.LastIndexOf(item: 5, index: 4, count: 2, equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .WasCalled(Times.Once);
     }
 
     [Test]
     public async Task LastIndexOf_WithStartIndex_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.Count.Returns(5);
-        mock.LastIndexOf(Any<int>(), Any<int>(), Any<int>(), IsNull<IEqualityComparer<int>?>()).Returns(2);
+
+        mock.LastIndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .Returns(2);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -628,16 +715,25 @@ public class ImmutableListWithValueEqualityTests
         // Assert
         await Assert.That(index).IsEqualTo(2);
         mock.Count.WasCalled(Times.AtLeastOnce);
-        mock.LastIndexOf(5, 2, 3, IsNull<IEqualityComparer<int>?>()).WasCalled(Times.Once);
+
+        mock.LastIndexOf(item: 5, index: 2, count: 3, equalityComparer: Arg.IsNull<IEqualityComparer<int>?>())
+            .WasCalled(Times.Once);
     }
 
     [Test]
     public async Task LastIndexOf_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.Count.Returns(5);
-        mock.LastIndexOf(Any<int>(), Any<int>(), Any<int>(), Any<IEqualityComparer<int>?>()).Returns(4);
+
+        mock.LastIndexOf(
+                item: Arg.Any<int>(),
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .Returns(4);
+
         IImmutableListWithValueEquality<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -646,7 +742,13 @@ public class ImmutableListWithValueEqualityTests
         // Assert
         await Assert.That(index).IsEqualTo(4);
         mock.Count.WasCalled(Times.AtLeastOnce);
-        mock.LastIndexOf(5, Any<int>(), Any<int>(), Any<IEqualityComparer<int>?>()).WasCalled(Times.AtLeastOnce);
+
+        mock.LastIndexOf(
+                item: 5,
+                index: Arg.Any<int>(),
+                count: Arg.Any<int>(),
+                equalityComparer: Arg.Any<IEqualityComparer<int>?>())
+            .WasCalled(Times.AtLeastOnce);
     }
 
     [Test]
@@ -654,8 +756,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 2, 3, 4);
-        var mock = IImmutableList<int>.Mock();
-        mock.Add(Any<int>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.Add(Arg.Any<int>()).Returns(returnedList);
         IImmutableList<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -672,8 +774,8 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList.Create(1, 3);
-        var mock = IImmutableList<int>.Mock();
-        mock.Remove(Any<int>(), Any<IEqualityComparer<int>?>()).Returns(returnedList);
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
+        mock.Remove(value: Arg.Any<int>(), equalityComparer: Arg.Any<IEqualityComparer<int>?>()).Returns(returnedList);
         IImmutableList<int> list = mock.ToImmutableListWithValueEquality();
 
         // Act
@@ -682,7 +784,7 @@ public class ImmutableListWithValueEqualityTests
         // Assert
         List<int> resultItems = [.. result];
         await Assert.That(resultItems).IsEquivalentTo([1, 3]);
-        mock.Remove(2, EqualityComparer<int>.Default).WasCalled(Times.Once);
+        mock.Remove(value: 2, equalityComparer: EqualityComparer<int>.Default).WasCalled(Times.Once);
     }
 
     [Test]
@@ -690,7 +792,7 @@ public class ImmutableListWithValueEqualityTests
     {
         // Arrange
         IImmutableList<int> returnedList = ImmutableList<int>.Empty;
-        var mock = IImmutableList<int>.Mock();
+        IImmutableList_T_Mock<int> mock = IImmutableList<int>.Mock();
         mock.Clear().Returns(returnedList);
         IImmutableList<int> list = mock.ToImmutableListWithValueEquality();
 

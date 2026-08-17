@@ -31,7 +31,7 @@ public class ReadOnlyStackWithValueEqualityTests
         IReadOnlyStackWithValueEquality<int> stack = [1, 2, 3];
 
         // Assert
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         using (Assert.Multiple())
         {
@@ -66,7 +66,7 @@ public class ReadOnlyStackWithValueEqualityTests
         IReadOnlyStackWithValueEquality<int> stack = underlyingStack.ToReadOnlyStackWithValueEquality();
 
         // Assert
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         using (Assert.Multiple())
         {
@@ -237,7 +237,7 @@ public class ReadOnlyStackWithValueEqualityTests
         IReadOnlyStackWithValueEquality<int> stack = [];
 
         // Act & Assert
-        await Assert.That(() => stack.Peek()).Throws<InvalidOperationException>();
+        await Assert.That(stack.Peek).Throws<InvalidOperationException>();
     }
 
     [Test]
@@ -309,7 +309,7 @@ public class ReadOnlyStackWithValueEqualityTests
         IReadOnlyStackWithValueEquality<int> stack = [];
 
         // Act
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         // Assert
         await Assert.That(array).IsEmpty();
@@ -322,7 +322,7 @@ public class ReadOnlyStackWithValueEqualityTests
         IReadOnlyStackWithValueEquality<int> stack = [1, 2, 3];
 
         // Act
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         // Assert
         await Assert.That(array.Length).IsEqualTo(3);

@@ -7,7 +7,6 @@ using TUnit.Core;
 using TUnit.Mocks;
 using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -264,8 +263,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IImmutableDictionary<string, int>.Mock();
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
         mock.Count.Returns(3);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -281,8 +281,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task ContainsKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.ContainsKey(Any<string>()).Returns(true);
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.ContainsKey(Arg.Any<string>()).Returns(true);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -298,8 +299,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task TryGetValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.TryGetValue(Any<string>()).Returns(true).SetsOutValue(2);
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.TryGetValue(Arg.Any<string>()).Returns(true).SetsOutValue(2);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -320,8 +322,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.Item(Any<string>()).Returns(3);
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.Item(Arg.Any<string>()).Returns(3);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -338,8 +341,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     {
         // Arrange
         string[] keys = ["a", "b", "c"];
-        var mock = IImmutableDictionary<string, int>.Mock();
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
         mock.Keys.Returns(keys);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -356,8 +360,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     {
         // Arrange
         int[] values = [1, 2, 3];
-        var mock = IImmutableDictionary<string, int>.Mock();
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
         mock.Values.Returns(values);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -375,12 +380,12 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         List<KeyValuePair<string, int>> items =
         [
-            new KeyValuePair<string, int>(key: "a", value: 1),
-            new KeyValuePair<string, int>(key: "b", value: 2),
-            new KeyValuePair<string, int>(key: "c", value: 3)
+            new(key: "a", value: 1), new(key: "b", value: 2), new(key: "c", value: 3)
         ];
-        var mock = IImmutableDictionary<string, int>.Mock();
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -404,8 +409,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int>());
-        var mock = IImmutableDictionary<string, int>.Mock();
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
         mock.Clear().Returns(returnedDictionary);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -423,8 +430,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 1, ["d"] = 4 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.Add(Any<string>(), Any<int>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.Add(key: Arg.Any<string>(), value: Arg.Any<int>()).Returns(returnedDictionary);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -433,21 +442,21 @@ public class ImmutableDictionaryWithValueEqualityTests
 
         // Assert
         await Assert.That(result["d"]).IsEqualTo(4);
-        mock.Add("d", 4).WasCalled(Times.Once);
+        mock.Add(key: "d", value: 4).WasCalled(Times.Once);
     }
 
     [Test]
     public async Task AddRange_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        KeyValuePair<string, int>[] pairs =
-        [
-            new KeyValuePair<string, int>(key: "d", value: 4), new KeyValuePair<string, int>(key: "e", value: 5)
-        ];
+        KeyValuePair<string, int>[] pairs = [new(key: "d", value: 4), new(key: "e", value: 5)];
+
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["d"] = 4, ["e"] = 5 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.AddRange(Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.AddRange(Arg.Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -465,8 +474,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 100 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.SetItem(Any<string>(), Any<int>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.SetItem(key: Arg.Any<string>(), value: Arg.Any<int>()).Returns(returnedDictionary);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -475,21 +486,21 @@ public class ImmutableDictionaryWithValueEqualityTests
 
         // Assert
         await Assert.That(result["a"]).IsEqualTo(100);
-        mock.SetItem("a", 100).WasCalled(Times.Once);
+        mock.SetItem(key: "a", value: 100).WasCalled(Times.Once);
     }
 
     [Test]
     public async Task SetItems_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        KeyValuePair<string, int>[] items =
-        [
-            new KeyValuePair<string, int>(key: "a", value: 111), new KeyValuePair<string, int>(key: "d", value: 4)
-        ];
+        KeyValuePair<string, int>[] items = [new(key: "a", value: 111), new(key: "d", value: 4)];
+
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 111, ["d"] = 4 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.SetItems(Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.SetItems(Arg.Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -506,10 +517,13 @@ public class ImmutableDictionaryWithValueEqualityTests
     {
         // Arrange
         string[] keys = ["a", "b"];
+
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["c"] = 3 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.RemoveRange(Any<IEnumerable<string>>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.RemoveRange(Arg.Any<IEnumerable<string>>()).Returns(returnedDictionary);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -527,8 +541,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 1, ["c"] = 3 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.Remove(Any<string>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.Remove(Arg.Any<string>()).Returns(returnedDictionary);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -545,8 +561,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     {
         // Arrange
         KeyValuePair<string, int> pair = new(key: "a", value: 1);
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.Contains(Any<KeyValuePair<string, int>>()).Returns(true);
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.Contains(Arg.Any<KeyValuePair<string, int>>()).Returns(true);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -562,8 +579,9 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task TryGetKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.TryGetKey(Any<string>()).Returns(true);
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.TryGetKey(Arg.Any<string>()).Returns(true);
+
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
             mock.ToImmutableDictionaryWithValueEquality();
 
@@ -576,13 +594,15 @@ public class ImmutableDictionaryWithValueEqualityTests
     }
 
     [Test]
-    public async Task ImmutableDictionaryAdd_WhenCalledThroughBaseInterface_ThenCallIsPassedThroughToUnderlyingDictionary()
+    public async Task
+        ImmutableDictionaryAdd_WhenCalledThroughBaseInterface_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["d"] = 4 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.Add(Any<string>(), Any<int>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.Add(key: Arg.Any<string>(), value: Arg.Any<int>()).Returns(returnedDictionary);
         IImmutableDictionary<string, int> dictionary = mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
@@ -590,7 +610,7 @@ public class ImmutableDictionaryWithValueEqualityTests
 
         // Assert
         await Assert.That(result["d"]).IsEqualTo(4);
-        mock.Add("d", 4).WasCalled(Times.Once);
+        mock.Add(key: "d", value: 4).WasCalled(Times.Once);
     }
 
     [Test]
@@ -600,8 +620,9 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 100 });
-        var mock = IImmutableDictionary<string, int>.Mock();
-        mock.SetItem(Any<string>(), Any<int>()).Returns(returnedDictionary);
+
+        IImmutableDictionary_TKey_TValue_Mock<string, int> mock = IImmutableDictionary<string, int>.Mock();
+        mock.SetItem(key: Arg.Any<string>(), value: Arg.Any<int>()).Returns(returnedDictionary);
         IImmutableDictionary<string, int> dictionary = mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
@@ -609,7 +630,7 @@ public class ImmutableDictionaryWithValueEqualityTests
 
         // Assert
         await Assert.That(result["a"]).IsEqualTo(100);
-        mock.SetItem("a", 100).WasCalled(Times.Once);
+        mock.SetItem(key: "a", value: 100).WasCalled(Times.Once);
     }
 
     private record Record(IImmutableDictionaryWithValueEquality<string, int> Dictionary);

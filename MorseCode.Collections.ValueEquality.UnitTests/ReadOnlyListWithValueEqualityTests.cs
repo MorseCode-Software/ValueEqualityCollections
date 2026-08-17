@@ -6,7 +6,6 @@ using TUnit.Core;
 using TUnit.Mocks;
 using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -194,7 +193,7 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IReadOnlyList<int>.Mock();
+        IReadOnlyList_T_Mock<int> mock = IReadOnlyList<int>.Mock();
         mock.Count.Returns(3);
         IReadOnlyListWithValueEquality<int> list = mock.ToReadOnlyListWithValueEquality();
 
@@ -210,8 +209,8 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        var mock = IReadOnlyList<int>.Mock();
-        mock.Item(Any<int>()).Returns(4);
+        IReadOnlyList_T_Mock<int> mock = IReadOnlyList<int>.Mock();
+        mock.Item(Arg.Any<int>()).Returns(4);
         IReadOnlyListWithValueEquality<int> list = mock.ToReadOnlyListWithValueEquality();
 
         // Act
@@ -227,7 +226,7 @@ public class ReadOnlyListWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IReadOnlyList<int>.Mock();
+        IReadOnlyList_T_Mock<int> mock = IReadOnlyList<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IReadOnlyListWithValueEquality<int> list = mock.ToReadOnlyListWithValueEquality();
 

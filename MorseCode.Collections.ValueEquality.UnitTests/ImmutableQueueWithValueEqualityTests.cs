@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading.Tasks;
 using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
@@ -8,7 +7,6 @@ using TUnit.Core;
 using TUnit.Mocks;
 using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -36,7 +34,7 @@ public class ImmutableQueueWithValueEqualityTests
         IImmutableQueueWithValueEquality<int> queue = [1, 2, 3];
 
         // Assert
-        await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
+        await Assert.That([.. queue]).IsEquivalentTo([1, 2, 3]);
     }
 
     [Test]
@@ -62,7 +60,7 @@ public class ImmutableQueueWithValueEqualityTests
         IImmutableQueueWithValueEquality<int> queue = queueWithoutValueEquality.ToImmutableQueueWithValueEquality();
 
         // Assert
-        await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
+        await Assert.That([.. queue]).IsEquivalentTo([1, 2, 3]);
     }
 
     [Test]
@@ -181,7 +179,7 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(true);
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
@@ -197,7 +195,7 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.Peek().Returns(1);
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
@@ -213,7 +211,7 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(false);
         mock.Peek().Returns(1);
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
@@ -237,7 +235,7 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
@@ -254,12 +252,12 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
-        int[] result = queue.ToArray();
+        int[] result = [.. queue];
 
         // Assert
         await Assert.That(result).IsEquivalentTo(items);
@@ -271,7 +269,7 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
@@ -294,7 +292,7 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue<int>.Empty;
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.Clear().Returns(returnedQueue);
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
@@ -311,15 +309,15 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(1, 2, 3, 4);
-        var mock = IImmutableQueue<int>.Mock();
-        mock.Enqueue(Any<int>()).Returns(returnedQueue);
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
+        mock.Enqueue(Arg.Any<int>()).Returns(returnedQueue);
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Enqueue(4);
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedQueue]);
         mock.Enqueue(4).WasCalled(Times.Once);
     }
 
@@ -328,7 +326,7 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.Dequeue().Returns(returnedQueue);
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
@@ -336,7 +334,7 @@ public class ImmutableQueueWithValueEqualityTests
         IImmutableQueueWithValueEquality<int> result = queue.Dequeue();
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedQueue]);
         mock.Dequeue().WasCalled(Times.Once);
     }
 
@@ -345,7 +343,7 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.Peek().Returns(1);
         mock.Dequeue().Returns(returnedQueue);
         IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
@@ -357,7 +355,7 @@ public class ImmutableQueueWithValueEqualityTests
         using (Assert.Multiple())
         {
             await Assert.That(value).IsEqualTo(1);
-            await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+            await Assert.That([.. result]).IsEquivalentTo([.. returnedQueue]);
         }
 
         mock.Peek().WasCalled(Times.Once);
@@ -368,7 +366,7 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task IImmutableQueueIsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(false);
         IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
@@ -386,8 +384,8 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(1, 2, 3, 4);
-        var mock = IImmutableQueue<int>.Mock();
-        mock.Enqueue(Any<int>()).Returns(returnedQueue);
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
+        mock.Enqueue(Arg.Any<int>()).Returns(returnedQueue);
         IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
@@ -395,7 +393,7 @@ public class ImmutableQueueWithValueEqualityTests
         IImmutableQueue<int> result = queue.Enqueue(4);
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedQueue]);
         mock.Enqueue(4).WasCalled(Times.Once);
     }
 
@@ -404,7 +402,7 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.Dequeue().Returns(returnedQueue);
         IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
@@ -413,7 +411,7 @@ public class ImmutableQueueWithValueEqualityTests
         IImmutableQueue<int> result = queue.Dequeue();
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedQueue.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedQueue]);
         mock.Dequeue().WasCalled(Times.Once);
     }
 
@@ -422,7 +420,7 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue<int>.Empty;
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.Clear().Returns(returnedQueue);
         IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;

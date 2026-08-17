@@ -6,7 +6,6 @@ using TUnit.Core;
 using TUnit.Mocks;
 using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -241,8 +240,9 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IReadOnlyDictionary<string, int>.Mock();
+        IReadOnlyDictionary_TKey_TValue_Mock<string, int> mock = IReadOnlyDictionary<string, int>.Mock();
         mock.Count.Returns(3);
+
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
             mock.ToReadOnlyDictionaryWithValueEquality();
 
@@ -258,8 +258,9 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task ContainsKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IReadOnlyDictionary<string, int>.Mock();
-        mock.ContainsKey(Any<string>()).Returns(true);
+        IReadOnlyDictionary_TKey_TValue_Mock<string, int> mock = IReadOnlyDictionary<string, int>.Mock();
+        mock.ContainsKey(Arg.Any<string>()).Returns(true);
+
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
             mock.ToReadOnlyDictionaryWithValueEquality();
 
@@ -275,8 +276,9 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task TryGetValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IReadOnlyDictionary<string, int>.Mock();
-        mock.TryGetValue(Any<string>()).Returns(true).SetsOutValue(2);
+        IReadOnlyDictionary_TKey_TValue_Mock<string, int> mock = IReadOnlyDictionary<string, int>.Mock();
+        mock.TryGetValue(Arg.Any<string>()).Returns(true).SetsOutValue(2);
+
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
             mock.ToReadOnlyDictionaryWithValueEquality();
 
@@ -297,8 +299,9 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        var mock = IReadOnlyDictionary<string, int>.Mock();
-        mock.Item(Any<string>()).Returns(3);
+        IReadOnlyDictionary_TKey_TValue_Mock<string, int> mock = IReadOnlyDictionary<string, int>.Mock();
+        mock.Item(Arg.Any<string>()).Returns(3);
+
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
             mock.ToReadOnlyDictionaryWithValueEquality();
 
@@ -315,8 +318,9 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     {
         // Arrange
         string[] keys = ["a", "b", "c"];
-        var mock = IReadOnlyDictionary<string, int>.Mock();
+        IReadOnlyDictionary_TKey_TValue_Mock<string, int> mock = IReadOnlyDictionary<string, int>.Mock();
         mock.Keys.Returns(keys);
+
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
             mock.ToReadOnlyDictionaryWithValueEquality();
 
@@ -333,8 +337,9 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     {
         // Arrange
         int[] values = [1, 2, 3];
-        var mock = IReadOnlyDictionary<string, int>.Mock();
+        IReadOnlyDictionary_TKey_TValue_Mock<string, int> mock = IReadOnlyDictionary<string, int>.Mock();
         mock.Values.Returns(values);
+
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
             mock.ToReadOnlyDictionaryWithValueEquality();
 
@@ -352,12 +357,12 @@ public class ReadOnlyDictionaryWithValueEqualityTests
         // Arrange
         List<KeyValuePair<string, int>> items =
         [
-            new KeyValuePair<string, int>(key: "a", value: 1),
-            new KeyValuePair<string, int>(key: "b", value: 2),
-            new KeyValuePair<string, int>(key: "c", value: 3)
+            new(key: "a", value: 1), new(key: "b", value: 2), new(key: "c", value: 3)
         ];
-        var mock = IReadOnlyDictionary<string, int>.Mock();
+
+        IReadOnlyDictionary_TKey_TValue_Mock<string, int> mock = IReadOnlyDictionary<string, int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
+
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
             mock.ToReadOnlyDictionaryWithValueEquality();
 

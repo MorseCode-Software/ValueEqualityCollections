@@ -31,7 +31,7 @@ public class ReadOnlyQueueWithValueEqualityTests
         IReadOnlyQueueWithValueEquality<int> queue = [1, 2, 3];
 
         // Assert
-        await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
+        await Assert.That([.. queue]).IsEquivalentTo([1, 2, 3]);
     }
 
     [Test]
@@ -57,7 +57,7 @@ public class ReadOnlyQueueWithValueEqualityTests
         IReadOnlyQueueWithValueEquality<int> queue = queueWithoutValueEquality.ToReadOnlyQueueWithValueEquality();
 
         // Assert
-        await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
+        await Assert.That([.. queue]).IsEquivalentTo([1, 2, 3]);
     }
 
     [Test]
@@ -220,7 +220,7 @@ public class ReadOnlyQueueWithValueEqualityTests
         IReadOnlyQueueWithValueEquality<int> queue = [];
 
         // Act & Assert
-        await Assert.That(() => queue.Peek()).Throws<InvalidOperationException>();
+        await Assert.That(queue.Peek).Throws<InvalidOperationException>();
     }
 
     [Test]
@@ -292,7 +292,7 @@ public class ReadOnlyQueueWithValueEqualityTests
         IReadOnlyQueueWithValueEquality<int> queue = [];
 
         // Act
-        int[] result = queue.ToArray();
+        int[] result = [.. queue];
 
         // Assert
         await Assert.That(result).IsEmpty();
@@ -305,7 +305,7 @@ public class ReadOnlyQueueWithValueEqualityTests
         IReadOnlyQueueWithValueEquality<int> queue = [1, 2, 3];
 
         // Act
-        int[] result = queue.ToArray();
+        int[] result = [.. queue];
 
         // Assert
         await Assert.That(result).IsEquivalentTo([1, 2, 3]);

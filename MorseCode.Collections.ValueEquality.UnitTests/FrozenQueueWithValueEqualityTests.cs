@@ -8,9 +8,7 @@ using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
 using TUnit.Core;
 using TUnit.Mocks;
-using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -38,7 +36,7 @@ public class FrozenQueueWithValueEqualityTests
         IFrozenQueueWithValueEquality<int> queue = [1, 2, 3];
 
         // Assert
-        await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
+        await Assert.That([.. queue]).IsEquivalentTo([1, 2, 3]);
     }
 
     [Test]
@@ -58,13 +56,13 @@ public class FrozenQueueWithValueEqualityTests
     public async Task ToFrozenQueueWithValueEquality_WhenQueueHasThreeItems_ThenResultHasSameThreeItemsInOrder()
     {
         // Arrange
-        IEnumerable<int> queueWithoutValueEquality = new[] { 1, 2, 3 };
+        IEnumerable<int> queueWithoutValueEquality = [1, 2, 3];
 
         // Act
         IFrozenQueueWithValueEquality<int> queue = queueWithoutValueEquality.ToFrozenQueueWithValueEquality();
 
         // Assert
-        await Assert.That(queue.ToArray()).IsEquivalentTo([1, 2, 3]);
+        await Assert.That([.. queue]).IsEquivalentTo([1, 2, 3]);
     }
 
     [Test]
@@ -183,9 +181,11 @@ public class FrozenQueueWithValueEqualityTests
     public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(true);
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
+
+        IFrozenQueueWithValueEquality<int> queue =
+            FrozenQueueWithValueEqualityTests.CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         bool isEmpty = queue.IsEmpty;
@@ -199,9 +199,11 @@ public class FrozenQueueWithValueEqualityTests
     public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.Peek().Returns(1);
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
+
+        IFrozenQueueWithValueEquality<int> queue =
+            FrozenQueueWithValueEqualityTests.CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         int item = queue.Peek();
@@ -215,10 +217,12 @@ public class FrozenQueueWithValueEqualityTests
     public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(false);
         mock.Peek().Returns(1);
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
+
+        IFrozenQueueWithValueEquality<int> queue =
+            FrozenQueueWithValueEqualityTests.CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         bool found = queue.TryPeek(out int item);
@@ -239,9 +243,11 @@ public class FrozenQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
+
+        IFrozenQueueWithValueEquality<int> queue =
+            FrozenQueueWithValueEqualityTests.CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         bool contains = queue.Contains(2);
@@ -256,12 +262,14 @@ public class FrozenQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
+
+        IFrozenQueueWithValueEquality<int> queue =
+            FrozenQueueWithValueEqualityTests.CreateFrozenQueueWithValueEquality(mock);
 
         // Act
-        int[] result = queue.ToArray();
+        int[] result = [.. queue];
 
         // Assert
         await Assert.That(result).IsEquivalentTo(items);
@@ -273,9 +281,11 @@ public class FrozenQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        var mock = IImmutableQueue<int>.Mock();
+        IImmutableQueue_T_Mock<int> mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
+
+        IFrozenQueueWithValueEquality<int> queue =
+            FrozenQueueWithValueEqualityTests.CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         List<int> result = [];
@@ -301,13 +311,18 @@ public class FrozenQueueWithValueEqualityTests
         IImmutableQueue<T> immutableQueue,
         IEqualityComparer<T>? equalityComparer = null)
     {
-        Type openType = typeof(ValueEqualityCollectionFactory).GetNestedType(
-            name: "FrozenQueueWithValueEquality`1",
-            bindingAttr: BindingFlags.NonPublic)!;
+        Type openType =
+            typeof(ValueEqualityCollectionFactory).GetNestedType(
+                name: "FrozenQueueWithValueEquality`1",
+                bindingAttr: BindingFlags.NonPublic)!;
+
         Type closedType = openType.MakeGenericType(typeof(T));
-        ConstructorInfo constructor = closedType
-            .GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .Single();
+
+        ConstructorInfo constructor =
+            closedType
+                .GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Single();
+
         return (IFrozenQueueWithValueEquality<T>)constructor.Invoke([immutableQueue, equalityComparer]);
     }
 

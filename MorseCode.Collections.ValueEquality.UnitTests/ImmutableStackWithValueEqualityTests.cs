@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading.Tasks;
 using TUnit.Assertions;
 using TUnit.Assertions.Extensions;
@@ -8,7 +7,6 @@ using TUnit.Core;
 using TUnit.Mocks;
 using TUnit.Mocks.Arguments;
 using TUnit.Mocks.Generated;
-using static TUnit.Mocks.Arguments.Arg;
 
 namespace MorseCode.Collections.ValueEquality.UnitTests;
 
@@ -36,7 +34,7 @@ public class ImmutableStackWithValueEqualityTests
         IImmutableStackWithValueEquality<int> stack = [1, 2, 3];
 
         // Assert
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         using (Assert.Multiple())
         {
@@ -71,7 +69,7 @@ public class ImmutableStackWithValueEqualityTests
         IImmutableStackWithValueEquality<int> stack = underlyingStack.ToImmutableStackWithValueEquality();
 
         // Assert
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         using (Assert.Multiple())
         {
@@ -198,7 +196,7 @@ public class ImmutableStackWithValueEqualityTests
     public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.IsEmpty.Returns(true);
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
@@ -214,7 +212,7 @@ public class ImmutableStackWithValueEqualityTests
     public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.Peek().Returns(3);
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
@@ -230,7 +228,7 @@ public class ImmutableStackWithValueEqualityTests
     public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.IsEmpty.Returns(false);
         mock.Peek().Returns(3);
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
@@ -254,7 +252,7 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
@@ -271,12 +269,12 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
-        int[] array = stack.ToArray();
+        int[] array = [.. stack];
 
         // Assert
         await Assert.That(array).IsEquivalentTo(items);
@@ -288,7 +286,7 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
@@ -311,7 +309,7 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create<int>();
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.Clear().Returns(returnedStack);
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
@@ -328,15 +326,15 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(4, 3, 2, 1);
-        var mock = IImmutableStack<int>.Mock();
-        mock.Push(Any<int>()).Returns(returnedStack);
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
+        mock.Push(Arg.Any<int>()).Returns(returnedStack);
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Push(4);
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedStack]);
         mock.Push(4).WasCalled(Times.Once);
     }
 
@@ -345,7 +343,7 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.Pop().Returns(returnedStack);
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
@@ -353,7 +351,7 @@ public class ImmutableStackWithValueEqualityTests
         IImmutableStackWithValueEquality<int> result = stack.Pop();
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedStack]);
         mock.Pop().WasCalled(Times.Once);
     }
 
@@ -362,7 +360,7 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.Peek().Returns(3);
         mock.Pop().Returns(returnedStack);
         IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
@@ -374,7 +372,7 @@ public class ImmutableStackWithValueEqualityTests
         using (Assert.Multiple())
         {
             await Assert.That(value).IsEqualTo(3);
-            await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+            await Assert.That([.. result]).IsEquivalentTo([.. returnedStack]);
         }
 
         mock.Peek().WasCalled(Times.Once);
@@ -386,8 +384,8 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(4, 3, 2, 1);
-        var mock = IImmutableStack<int>.Mock();
-        mock.Push(Any<int>()).Returns(returnedStack);
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
+        mock.Push(Arg.Any<int>()).Returns(returnedStack);
         IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
 
@@ -395,7 +393,7 @@ public class ImmutableStackWithValueEqualityTests
         IImmutableStack<int> result = stack.Push(4);
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedStack]);
         mock.Push(4).WasCalled(Times.Once);
     }
 
@@ -404,7 +402,7 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.Pop().Returns(returnedStack);
         IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
@@ -413,7 +411,7 @@ public class ImmutableStackWithValueEqualityTests
         IImmutableStack<int> result = stack.Pop();
 
         // Assert
-        await Assert.That(result.ToArray()).IsEquivalentTo(returnedStack.ToArray());
+        await Assert.That([.. result]).IsEquivalentTo([.. returnedStack]);
         mock.Pop().WasCalled(Times.Once);
     }
 
@@ -422,7 +420,7 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create<int>();
-        var mock = IImmutableStack<int>.Mock();
+        IImmutableStack_T_Mock<int> mock = IImmutableStack<int>.Mock();
         mock.Clear().Returns(returnedStack);
         IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
