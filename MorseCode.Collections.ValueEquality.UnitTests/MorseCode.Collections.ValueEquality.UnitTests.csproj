@@ -28,6 +28,7 @@
         <Compile Include="FrozenQueueWithValueEqualityTests.cs"/>
         <Compile Include="FrozenSetWithValueEqualityTests.cs"/>
         <Compile Include="FrozenStackWithValueEqualityTests.cs"/>
+        <Compile Include="GlobalSetup.cs" />
         <Compile Include="ImmutableDictionaryWithValueEqualityTests.cs"/>
         <Compile Include="ImmutableListWithValueEqualityTests.cs"/>
         <Compile Include="ImmutableQueueWithValueEqualityTests.cs"/>
