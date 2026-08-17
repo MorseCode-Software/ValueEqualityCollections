@@ -181,9 +181,9 @@ public class ReadOnlySetWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.Count.Returns(3);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         int count = set.Count;
@@ -197,9 +197,9 @@ public class ReadOnlySetWithValueEqualityTests
     public async Task Contains_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.Contains(Any<int>()).Returns(true);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         bool contains = set.Contains(2);
@@ -214,9 +214,9 @@ public class ReadOnlySetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2, 3];
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.IsProperSubsetOf(Any<IEnumerable<int>>()).Returns(true);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isProperSubset = set.IsProperSubsetOf(other);
@@ -231,9 +231,9 @@ public class ReadOnlySetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2];
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.IsProperSupersetOf(Any<IEnumerable<int>>()).Returns(true);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isProperSuperset = set.IsProperSupersetOf(other);
@@ -248,9 +248,9 @@ public class ReadOnlySetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2, 3];
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.IsSubsetOf(Any<IEnumerable<int>>()).Returns(true);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isSubset = set.IsSubsetOf(other);
@@ -265,9 +265,9 @@ public class ReadOnlySetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2];
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.IsSupersetOf(Any<IEnumerable<int>>()).Returns(true);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         bool isSuperset = set.IsSupersetOf(other);
@@ -282,9 +282,9 @@ public class ReadOnlySetWithValueEqualityTests
     {
         // Arrange
         int[] other = [3, 4, 5];
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.Overlaps(Any<IEnumerable<int>>()).Returns(true);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         bool overlaps = set.Overlaps(other);
@@ -299,9 +299,9 @@ public class ReadOnlySetWithValueEqualityTests
     {
         // Arrange
         int[] other = [3, 2, 1];
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.SetEquals(Any<IEnumerable<int>>()).Returns(true);
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         bool setEquals = set.SetEquals(other);
@@ -316,9 +316,9 @@ public class ReadOnlySetWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IReadOnlySet<int>> mock = Mock.Of<IReadOnlySet<int>>();
+        var mock = IReadOnlySet<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IReadOnlySetWithValueEquality<int> set = mock.Object.ToReadOnlySetWithValueEquality();
+        IReadOnlySetWithValueEquality<int> set = mock.ToReadOnlySetWithValueEquality();
 
         // Act
         List<int> result = [];

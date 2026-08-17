@@ -241,10 +241,10 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IReadOnlyDictionary<string, int>> mock = Mock.Of<IReadOnlyDictionary<string, int>>();
+        var mock = IReadOnlyDictionary<string, int>.Mock();
         mock.Count.Returns(3);
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToReadOnlyDictionaryWithValueEquality();
+            mock.ToReadOnlyDictionaryWithValueEquality();
 
         // Act
         int count = dictionary.Count;
@@ -258,10 +258,10 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task ContainsKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IReadOnlyDictionary<string, int>> mock = Mock.Of<IReadOnlyDictionary<string, int>>();
+        var mock = IReadOnlyDictionary<string, int>.Mock();
         mock.ContainsKey(Any<string>()).Returns(true);
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToReadOnlyDictionaryWithValueEquality();
+            mock.ToReadOnlyDictionaryWithValueEquality();
 
         // Act
         bool containsKey = dictionary.ContainsKey("b");
@@ -275,10 +275,10 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task TryGetValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IReadOnlyDictionary<string, int>> mock = Mock.Of<IReadOnlyDictionary<string, int>>();
+        var mock = IReadOnlyDictionary<string, int>.Mock();
         mock.TryGetValue(Any<string>()).Returns(true).SetsOutValue(2);
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToReadOnlyDictionaryWithValueEquality();
+            mock.ToReadOnlyDictionaryWithValueEquality();
 
         // Act
         bool found = dictionary.TryGetValue(key: "b", value: out int value);
@@ -297,10 +297,10 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IReadOnlyDictionary<string, int>> mock = Mock.Of<IReadOnlyDictionary<string, int>>();
+        var mock = IReadOnlyDictionary<string, int>.Mock();
         mock.Item(Any<string>()).Returns(3);
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToReadOnlyDictionaryWithValueEquality();
+            mock.ToReadOnlyDictionaryWithValueEquality();
 
         // Act
         int value = dictionary["c"];
@@ -315,10 +315,10 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     {
         // Arrange
         string[] keys = ["a", "b", "c"];
-        Mock<IReadOnlyDictionary<string, int>> mock = Mock.Of<IReadOnlyDictionary<string, int>>();
+        var mock = IReadOnlyDictionary<string, int>.Mock();
         mock.Keys.Returns(keys);
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToReadOnlyDictionaryWithValueEquality();
+            mock.ToReadOnlyDictionaryWithValueEquality();
 
         // Act
         IEnumerable<string> result = dictionary.Keys;
@@ -333,10 +333,10 @@ public class ReadOnlyDictionaryWithValueEqualityTests
     {
         // Arrange
         int[] values = [1, 2, 3];
-        Mock<IReadOnlyDictionary<string, int>> mock = Mock.Of<IReadOnlyDictionary<string, int>>();
+        var mock = IReadOnlyDictionary<string, int>.Mock();
         mock.Values.Returns(values);
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToReadOnlyDictionaryWithValueEquality();
+            mock.ToReadOnlyDictionaryWithValueEquality();
 
         // Act
         IEnumerable<int> result = dictionary.Values;
@@ -356,10 +356,10 @@ public class ReadOnlyDictionaryWithValueEqualityTests
             new KeyValuePair<string, int>(key: "b", value: 2),
             new KeyValuePair<string, int>(key: "c", value: 3)
         ];
-        Mock<IReadOnlyDictionary<string, int>> mock = Mock.Of<IReadOnlyDictionary<string, int>>();
+        var mock = IReadOnlyDictionary<string, int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IReadOnlyDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToReadOnlyDictionaryWithValueEquality();
+            mock.ToReadOnlyDictionaryWithValueEquality();
 
         // Act
         List<KeyValuePair<string, int>> result = [];

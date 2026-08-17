@@ -194,9 +194,9 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        Mock<IReadOnlyList<int>> mock = Mock.Of<IReadOnlyList<int>>();
+        var mock = IReadOnlyList<int>.Mock();
         mock.Count.Returns(3);
-        IReadOnlyListWithValueEquality<int> list = mock.Object.ToReadOnlyListWithValueEquality();
+        IReadOnlyListWithValueEquality<int> list = mock.ToReadOnlyListWithValueEquality();
 
         // Act
         int count = list.Count;
@@ -210,9 +210,9 @@ public class ReadOnlyListWithValueEqualityTests
     public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingList()
     {
         // Arrange
-        Mock<IReadOnlyList<int>> mock = Mock.Of<IReadOnlyList<int>>();
+        var mock = IReadOnlyList<int>.Mock();
         mock.Item(Any<int>()).Returns(4);
-        IReadOnlyListWithValueEquality<int> list = mock.Object.ToReadOnlyListWithValueEquality();
+        IReadOnlyListWithValueEquality<int> list = mock.ToReadOnlyListWithValueEquality();
 
         // Act
         int item = list[1];
@@ -227,9 +227,9 @@ public class ReadOnlyListWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IReadOnlyList<int>> mock = Mock.Of<IReadOnlyList<int>>();
+        var mock = IReadOnlyList<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IReadOnlyListWithValueEquality<int> list = mock.Object.ToReadOnlyListWithValueEquality();
+        IReadOnlyListWithValueEquality<int> list = mock.ToReadOnlyListWithValueEquality();
 
         // Act
         List<int> result = [];

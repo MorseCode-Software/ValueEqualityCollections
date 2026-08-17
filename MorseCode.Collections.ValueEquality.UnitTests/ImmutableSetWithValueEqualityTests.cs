@@ -182,9 +182,9 @@ public class ImmutableSetWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Count.Returns(3);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         int count = set.Count;
@@ -198,9 +198,9 @@ public class ImmutableSetWithValueEqualityTests
     public async Task Contains_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Contains(Any<int>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool contains = set.Contains(2);
@@ -215,9 +215,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2, 3];
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.IsProperSubsetOf(Any<IEnumerable<int>>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool isProperSubset = set.IsProperSubsetOf(other);
@@ -232,9 +232,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2];
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.IsProperSupersetOf(Any<IEnumerable<int>>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool isProperSuperset = set.IsProperSupersetOf(other);
@@ -249,9 +249,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2, 3];
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.IsSubsetOf(Any<IEnumerable<int>>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool isSubset = set.IsSubsetOf(other);
@@ -266,9 +266,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         int[] other = [1, 2];
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.IsSupersetOf(Any<IEnumerable<int>>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool isSuperset = set.IsSupersetOf(other);
@@ -283,9 +283,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         int[] other = [3, 4, 5];
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Overlaps(Any<IEnumerable<int>>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool overlaps = set.Overlaps(other);
@@ -300,9 +300,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         int[] other = [3, 2, 1];
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.SetEquals(Any<IEnumerable<int>>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool setEquals = set.SetEquals(other);
@@ -317,9 +317,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         List<int> result = [];
@@ -340,9 +340,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create<int>();
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Clear().Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         IImmutableSetWithValueEquality<int> result = set.Clear();
@@ -357,9 +357,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create(1, 2, 3, 4);
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Add(Any<int>()).Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         IImmutableSetWithValueEquality<int> result = set.Add(4);
@@ -374,9 +374,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create(1, 3);
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Remove(Any<int>()).Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         IImmutableSetWithValueEquality<int> result = set.Remove(2);
@@ -392,9 +392,9 @@ public class ImmutableSetWithValueEqualityTests
         // Arrange
         int[] other = [3, 4, 5, 6];
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create(3, 4);
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Intersect(Any<IEnumerable<int>>()).Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         IImmutableSetWithValueEquality<int> result = set.Intersect(other);
@@ -410,9 +410,9 @@ public class ImmutableSetWithValueEqualityTests
         // Arrange
         int[] other = [3, 4];
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create(1, 2);
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Except(Any<IEnumerable<int>>()).Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         IImmutableSetWithValueEquality<int> result = set.Except(other);
@@ -428,9 +428,9 @@ public class ImmutableSetWithValueEqualityTests
         // Arrange
         int[] other = [2, 3, 4];
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create(1, 4);
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.SymmetricExcept(Any<IEnumerable<int>>()).Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         IImmutableSetWithValueEquality<int> result = set.SymmetricExcept(other);
@@ -446,9 +446,9 @@ public class ImmutableSetWithValueEqualityTests
         // Arrange
         int[] other = [2, 3];
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create(1, 2, 3);
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Union(Any<IEnumerable<int>>()).Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         IImmutableSetWithValueEquality<int> result = set.Union(other);
@@ -462,9 +462,9 @@ public class ImmutableSetWithValueEqualityTests
     public async Task TryGetValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.TryGetValue(Any<int>()).Returns(true);
-        IImmutableSetWithValueEquality<int> set = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> set = mock.ToImmutableSetWithValueEquality();
 
         // Act
         bool found = set.TryGetValue(equalValue: 2, actualValue: out int _);
@@ -479,9 +479,9 @@ public class ImmutableSetWithValueEqualityTests
     {
         // Arrange
         IImmutableSet<int> returnedSet = ImmutableHashSet.Create(1, 2, 3, 4);
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Add(Any<int>()).Returns(returnedSet);
-        IImmutableSetWithValueEquality<int> setWithValueEquality = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> setWithValueEquality = mock.ToImmutableSetWithValueEquality();
         IImmutableSet<int> baseSet = setWithValueEquality;
 
         // Act
@@ -496,9 +496,9 @@ public class ImmutableSetWithValueEqualityTests
     public async Task Contains_WhenCalledThroughBaseImmutableSetInterface_ThenCallIsPassedThroughToUnderlyingSet()
     {
         // Arrange
-        Mock<IImmutableSet<int>> mock = Mock.Of<IImmutableSet<int>>();
+        var mock = IImmutableSet<int>.Mock();
         mock.Contains(Any<int>()).Returns(true);
-        IImmutableSetWithValueEquality<int> setWithValueEquality = mock.Object.ToImmutableSetWithValueEquality();
+        IImmutableSetWithValueEquality<int> setWithValueEquality = mock.ToImmutableSetWithValueEquality();
         IImmutableSet<int> baseSet = setWithValueEquality;
 
         // Act

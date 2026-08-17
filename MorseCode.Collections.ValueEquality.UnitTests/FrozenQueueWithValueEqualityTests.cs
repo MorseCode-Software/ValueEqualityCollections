@@ -183,9 +183,9 @@ public class FrozenQueueWithValueEqualityTests
     public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(true);
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock.Object);
+        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         bool isEmpty = queue.IsEmpty;
@@ -199,9 +199,9 @@ public class FrozenQueueWithValueEqualityTests
     public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Peek().Returns(1);
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock.Object);
+        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         int item = queue.Peek();
@@ -215,10 +215,10 @@ public class FrozenQueueWithValueEqualityTests
     public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(false);
         mock.Peek().Returns(1);
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock.Object);
+        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         bool found = queue.TryPeek(out int item);
@@ -239,9 +239,9 @@ public class FrozenQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock.Object);
+        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         bool contains = queue.Contains(2);
@@ -256,9 +256,9 @@ public class FrozenQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock.Object);
+        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         int[] result = queue.ToArray();
@@ -273,9 +273,9 @@ public class FrozenQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock.Object);
+        IFrozenQueueWithValueEquality<int> queue = CreateFrozenQueueWithValueEquality(mock);
 
         // Act
         List<int> result = [];

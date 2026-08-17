@@ -181,9 +181,9 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(true);
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         bool isEmpty = queue.IsEmpty;
@@ -197,9 +197,9 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Peek().Returns(1);
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         int item = queue.Peek();
@@ -213,10 +213,10 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(false);
         mock.Peek().Returns(1);
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         bool found = queue.TryPeek(out int item);
@@ -237,9 +237,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         bool contains = queue.Contains(2);
@@ -254,9 +254,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         int[] result = queue.ToArray();
@@ -271,9 +271,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         List<int> items = [1, 2, 3];
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         List<int> result = [];
@@ -294,9 +294,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue<int>.Empty;
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Clear().Returns(returnedQueue);
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Clear();
@@ -311,9 +311,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(1, 2, 3, 4);
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Enqueue(Any<int>()).Returns(returnedQueue);
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Enqueue(4);
@@ -328,9 +328,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Dequeue().Returns(returnedQueue);
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Dequeue();
@@ -345,10 +345,10 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Peek().Returns(1);
         mock.Dequeue().Returns(returnedQueue);
-        IImmutableQueueWithValueEquality<int> queue = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> queue = mock.ToImmutableQueueWithValueEquality();
 
         // Act
         IImmutableQueueWithValueEquality<int> result = queue.Dequeue(out int value);
@@ -368,9 +368,9 @@ public class ImmutableQueueWithValueEqualityTests
     public async Task IImmutableQueueIsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingQueue()
     {
         // Arrange
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.IsEmpty.Returns(false);
-        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act
@@ -386,9 +386,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(1, 2, 3, 4);
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Enqueue(Any<int>()).Returns(returnedQueue);
-        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act
@@ -404,9 +404,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue.Create(2, 3);
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Dequeue().Returns(returnedQueue);
-        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act
@@ -422,9 +422,9 @@ public class ImmutableQueueWithValueEqualityTests
     {
         // Arrange
         IImmutableQueue<int> returnedQueue = ImmutableQueue<int>.Empty;
-        Mock<IImmutableQueue<int>> mock = Mock.Of<IImmutableQueue<int>>();
+        var mock = IImmutableQueue<int>.Mock();
         mock.Clear().Returns(returnedQueue);
-        IImmutableQueueWithValueEquality<int> source = mock.Object.ToImmutableQueueWithValueEquality();
+        IImmutableQueueWithValueEquality<int> source = mock.ToImmutableQueueWithValueEquality();
         IImmutableQueue<int> queue = source;
 
         // Act

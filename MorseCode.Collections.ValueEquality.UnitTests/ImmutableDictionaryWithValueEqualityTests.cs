@@ -264,10 +264,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task Count_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Count.Returns(3);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         int count = dictionary.Count;
@@ -281,10 +281,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task ContainsKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.ContainsKey(Any<string>()).Returns(true);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         bool containsKey = dictionary.ContainsKey("b");
@@ -298,10 +298,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task TryGetValue_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.TryGetValue(Any<string>()).Returns(true).SetsOutValue(2);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         bool found = dictionary.TryGetValue(key: "b", value: out int value);
@@ -320,10 +320,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task Indexer_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Item(Any<string>()).Returns(3);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         int value = dictionary["c"];
@@ -338,10 +338,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     {
         // Arrange
         string[] keys = ["a", "b", "c"];
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Keys.Returns(keys);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IEnumerable<string> result = dictionary.Keys;
@@ -356,10 +356,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     {
         // Arrange
         int[] values = [1, 2, 3];
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Values.Returns(values);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IEnumerable<int> result = dictionary.Values;
@@ -379,10 +379,10 @@ public class ImmutableDictionaryWithValueEqualityTests
             new KeyValuePair<string, int>(key: "b", value: 2),
             new KeyValuePair<string, int>(key: "c", value: 3)
         ];
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         List<KeyValuePair<string, int>> result = [];
@@ -404,10 +404,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int>());
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Clear().Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.Clear();
@@ -423,10 +423,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 1, ["d"] = 4 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Add(Any<string>(), Any<int>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.Add(key: "d", value: 4);
@@ -446,10 +446,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         ];
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["d"] = 4, ["e"] = 5 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.AddRange(Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.AddRange(pairs);
@@ -465,10 +465,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 100 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.SetItem(Any<string>(), Any<int>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.SetItem(key: "a", value: 100);
@@ -488,10 +488,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         ];
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 111, ["d"] = 4 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.SetItems(Any<IEnumerable<KeyValuePair<string, int>>>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.SetItems(items);
@@ -508,10 +508,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         string[] keys = ["a", "b"];
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["c"] = 3 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.RemoveRange(Any<IEnumerable<string>>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.RemoveRange(keys);
@@ -527,10 +527,10 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 1, ["c"] = 3 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Remove(Any<string>()).Returns(returnedDictionary);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionaryWithValueEquality<string, int> result = dictionary.Remove("b");
@@ -545,10 +545,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     {
         // Arrange
         KeyValuePair<string, int> pair = new(key: "a", value: 1);
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Contains(Any<KeyValuePair<string, int>>()).Returns(true);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         bool contains = dictionary.Contains(pair);
@@ -562,10 +562,10 @@ public class ImmutableDictionaryWithValueEqualityTests
     public async Task TryGetKey_WhenCalled_ThenCallIsPassedThroughToUnderlyingDictionary()
     {
         // Arrange
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.TryGetKey(Any<string>()).Returns(true);
         IImmutableDictionaryWithValueEquality<string, int> dictionary =
-            mock.Object.ToImmutableDictionaryWithValueEquality();
+            mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         bool found = dictionary.TryGetKey(equalKey: "a", actualKey: out string _);
@@ -581,9 +581,9 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["d"] = 4 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.Add(Any<string>(), Any<int>()).Returns(returnedDictionary);
-        IImmutableDictionary<string, int> dictionary = mock.Object.ToImmutableDictionaryWithValueEquality();
+        IImmutableDictionary<string, int> dictionary = mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionary<string, int> result = dictionary.Add(key: "d", value: 4);
@@ -600,9 +600,9 @@ public class ImmutableDictionaryWithValueEqualityTests
         // Arrange
         IImmutableDictionary<string, int> returnedDictionary =
             ImmutableDictionary.CreateRange(new Dictionary<string, int> { ["a"] = 100 });
-        Mock<IImmutableDictionary<string, int>> mock = Mock.Of<IImmutableDictionary<string, int>>();
+        var mock = IImmutableDictionary<string, int>.Mock();
         mock.SetItem(Any<string>(), Any<int>()).Returns(returnedDictionary);
-        IImmutableDictionary<string, int> dictionary = mock.Object.ToImmutableDictionaryWithValueEquality();
+        IImmutableDictionary<string, int> dictionary = mock.ToImmutableDictionaryWithValueEquality();
 
         // Act
         IImmutableDictionary<string, int> result = dictionary.SetItem(key: "a", value: 100);

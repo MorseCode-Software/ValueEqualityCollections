@@ -198,9 +198,9 @@ public class ImmutableStackWithValueEqualityTests
     public async Task IsEmpty_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.IsEmpty.Returns(true);
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         bool isEmpty = stack.IsEmpty;
@@ -214,9 +214,9 @@ public class ImmutableStackWithValueEqualityTests
     public async Task Peek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Peek().Returns(3);
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         int item = stack.Peek();
@@ -230,10 +230,10 @@ public class ImmutableStackWithValueEqualityTests
     public async Task TryPeek_WhenCalled_ThenCallIsPassedThroughToUnderlyingStack()
     {
         // Arrange
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.IsEmpty.Returns(false);
         mock.Peek().Returns(3);
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         bool found = stack.TryPeek(out int result);
@@ -254,9 +254,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         bool contains = stack.Contains(2);
@@ -271,9 +271,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         int[] array = stack.ToArray();
@@ -288,9 +288,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         List<int> items = [3, 2, 1];
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.GetEnumerator().Returns(items.GetEnumerator());
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         List<int> result = [];
@@ -311,9 +311,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create<int>();
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Clear().Returns(returnedStack);
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Clear();
@@ -328,9 +328,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(4, 3, 2, 1);
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Push(Any<int>()).Returns(returnedStack);
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Push(4);
@@ -345,9 +345,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Pop().Returns(returnedStack);
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Pop();
@@ -362,10 +362,10 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Peek().Returns(3);
         mock.Pop().Returns(returnedStack);
-        IImmutableStackWithValueEquality<int> stack = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stack = mock.ToImmutableStackWithValueEquality();
 
         // Act
         IImmutableStackWithValueEquality<int> result = stack.Pop(out int value);
@@ -386,9 +386,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(4, 3, 2, 1);
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Push(Any<int>()).Returns(returnedStack);
-        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
 
         // Act
@@ -404,9 +404,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create(2, 1);
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Pop().Returns(returnedStack);
-        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
 
         // Act
@@ -422,9 +422,9 @@ public class ImmutableStackWithValueEqualityTests
     {
         // Arrange
         IImmutableStack<int> returnedStack = ImmutableStack.Create<int>();
-        Mock<IImmutableStack<int>> mock = Mock.Of<IImmutableStack<int>>();
+        var mock = IImmutableStack<int>.Mock();
         mock.Clear().Returns(returnedStack);
-        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.Object.ToImmutableStackWithValueEquality();
+        IImmutableStackWithValueEquality<int> stackWithValueEquality = mock.ToImmutableStackWithValueEquality();
         IImmutableStack<int> stack = stackWithValueEquality;
 
         // Act
