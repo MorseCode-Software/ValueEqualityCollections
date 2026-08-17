@@ -3,6 +3,9 @@
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <EnableDefaultItems>false</EnableDefaultItems>
+        <TUnitImplicitUsings>disable</TUnitImplicitUsings>
+        <TUnitAssertionsImplicitUsings>disable</TUnitAssertionsImplicitUsings>
+        <TUnitMockImplicitUsings>disable</TUnitMockImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>MorseCode.Collections.ValueEquality.UnitTests</RootNamespace>
         <Title>Value Equality Collections</Title>
@@ -12,6 +15,7 @@
 
     <ItemGroup>
         <PackageReference Include="TUnit" Version="1.64.13"/>
+        <PackageReference Include="TUnit.Mocks" Version="1.65.0" />
     </ItemGroup>
 
     <ItemGroup>
