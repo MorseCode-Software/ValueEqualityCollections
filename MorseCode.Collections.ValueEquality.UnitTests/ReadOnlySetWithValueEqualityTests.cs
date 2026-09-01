@@ -41,7 +41,11 @@ public class ReadOnlySetWithValueEqualityTests
     public async Task ToReadOnlySetWithValueEquality_WhenSetIsEmpty_ThenResultIsEmpty()
     {
         // Arrange
+#if NET5_0_OR_GREATER
         IReadOnlySet<int> setWithoutValueEquality = new HashSet<int>();
+#else
+        HashSet<int> setWithoutValueEquality = new();
+#endif
 
         // Act
         IReadOnlySetWithValueEquality<int> set = setWithoutValueEquality.ToReadOnlySetWithValueEquality();
@@ -54,7 +58,11 @@ public class ReadOnlySetWithValueEqualityTests
     public async Task ToReadOnlySetWithValueEquality_WhenSetHasThreeItems_ThenResultHasSameThreeItems()
     {
         // Arrange
+#if NET5_0_OR_GREATER
         IReadOnlySet<int> setWithoutValueEquality = new HashSet<int> { 1, 2, 3 };
+#else
+        HashSet<int> setWithoutValueEquality = [1, 2, 3];
+#endif
 
         // Act
         IReadOnlySetWithValueEquality<int> set = setWithoutValueEquality.ToReadOnlySetWithValueEquality();

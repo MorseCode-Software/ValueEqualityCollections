@@ -1,7 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFrameworks>net6.0;net472;netstandard2.0</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <!--
+            System.Collections.Immutable does not list net6.0 among its officially tested targets, but its
+            netstandard2.0 asset (which net6.0 resolves to) has been verified to include the Frozen collection
+            and CollectionBuilderAttribute support this library relies on.
+        -->
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
         <EnableDefaultItems>false</EnableDefaultItems>
         <Nullable>enable</Nullable>
         <RootNamespace>MorseCode.Collections.ValueEquality</RootNamespace>
@@ -36,6 +43,25 @@
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
+    <!--
+        On net472 and netstandard2.0, IReadOnlyDictionary<TKey,TValue> comes from a reference assembly built
+        without nullable reference type annotations, so the compiler cannot match its (unannotated) TryGetValue
+        signature against this library's (annotated) implementation. This is an unavoidable consequence of
+        targeting those frameworks under #nullable enable, not an actual nullability bug.
+    -->
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'netstandard2.0' ">
+        <NoWarn>$(NoWarn);CS8767</NoWarn>
+    </PropertyGroup>
+
+    <!--
+        On net6.0, doc-comment cref resolution for IReadOnlySet{T} reports a spurious ambiguity against itself
+        (confirmed there is no duplicate type in the compiled output); this is purely a doc-generation quirk with
+        no effect on behavior.
+    -->
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+        <NoWarn>$(NoWarn);CS0419</NoWarn>
+    </PropertyGroup>
+
     <ItemGroup>
         <Compile Include="IFrozenDictionaryWithValueEquality.cs"/>
         <Compile Include="IFrozenListWithValueEquality.cs"/>
@@ -52,11 +78,13 @@
         <Compile Include="IReadOnlyQueueWithValueEquality.cs"/>
         <Compile Include="IReadOnlySetWithValueEquality.cs"/>
         <Compile Include="IReadOnlyStackWithValueEquality.cs"/>
+        <Compile Include="Polyfills.cs"/>
         <Compile Include="ValueEqualityCollectionFactory.cs"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2026.2.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="10.0.10"/>
     </ItemGroup>
 
 </Project>

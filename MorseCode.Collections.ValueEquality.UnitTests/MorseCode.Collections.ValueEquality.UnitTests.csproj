@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFrameworks>net6.0;net472</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <!-- TUnit's own transitive dependencies don't list net6.0 as officially tested; their netstandard2.0 assets work fine. -->
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <!-- net6.0 is targeted deliberately alongside net472; both are supported build targets for this library. -->
+        <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
         <EnableDefaultItems>false</EnableDefaultItems>
         <TUnitImplicitUsings>disable</TUnitImplicitUsings>
         <TUnitAssertionsImplicitUsings>disable</TUnitAssertionsImplicitUsings>
@@ -13,9 +18,14 @@
         <Description>Unit tests for MorseCode.Collections.ValueEquality.</Description>
     </PropertyGroup>
 
+    <!-- Microsoft.Testing.Platform generates a native apphost for net472, which requires an explicit RuntimeIdentifier. -->
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="TUnit" Version="1.64.13"/>
-        <PackageReference Include="TUnit.Mocks" Version="1.65.0" />
+        <PackageReference Include="TUnit.Mocks" Version="1.65.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -28,7 +38,8 @@
         <Compile Include="FrozenQueueWithValueEqualityTests.cs"/>
         <Compile Include="FrozenSetWithValueEqualityTests.cs"/>
         <Compile Include="FrozenStackWithValueEqualityTests.cs"/>
-        <Compile Include="GlobalSetup.cs" />
+        <Compile Include="GlobalSetup.cs"/>
+        <Compile Include="Polyfills.cs"/>
         <Compile Include="ImmutableDictionaryWithValueEqualityTests.cs"/>
         <Compile Include="ImmutableListWithValueEqualityTests.cs"/>
         <Compile Include="ImmutableQueueWithValueEqualityTests.cs"/>

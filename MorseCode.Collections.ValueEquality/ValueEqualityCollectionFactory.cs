@@ -37,7 +37,10 @@ public static class ValueEqualityCollectionFactory
 
     /// <summary>Creates a wrapper around the read-only set <paramref name="source" /> which uses value equality.</summary>
     /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
-    /// <param name="source">An <see cref="IReadOnlySet{T}" /> to wrap as a read-only set which uses value equality.</param>
+    /// <param name="source">
+    ///     An <see cref="System.Collections.Generic.IReadOnlySet{T}" /> to wrap as a read-only set which uses
+    ///     value equality.
+    /// </param>
     /// <returns>
     ///     An <see cref="IReadOnlySetWithValueEquality{T}" /> which wraps the read-only set <paramref name="source" />
     ///     and uses value equality.
@@ -46,6 +49,23 @@ public static class ValueEqualityCollectionFactory
     public static IReadOnlySetWithValueEquality<T>
         ToReadOnlySetWithValueEquality<T>(this IReadOnlySet<T> source) =>
         new ReadOnlySetWithValueEquality<T>(source);
+#if !NET5_0_OR_GREATER
+
+    /// <summary>Creates a wrapper around the read-only set <paramref name="source" /> which uses value equality.</summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <param name="source">
+    ///     An <see cref="System.Collections.Generic.HashSet{T}" /> to wrap as a read-only set which uses
+    ///     value equality.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IReadOnlySetWithValueEquality{T}" /> which wraps the read-only set <paramref name="source" />
+    ///     and uses value equality.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
+    public static IReadOnlySetWithValueEquality<T>
+        ToReadOnlySetWithValueEquality<T>(this HashSet<T> source) =>
+        new HashSetWithValueEquality<T>(source);
+#endif
 
     /// <summary>Creates a wrapper around the read-only dictionary <paramref name="source" /> which uses value equality.</summary>
     /// <typeparam name="TKey">The type of keys of <paramref name="source" />.</typeparam>
@@ -347,6 +367,7 @@ public static class ValueEqualityCollectionFactory
                 underlying: [.. source],
                 equalityComparer: null);
 
+#if NET5_0_OR_GREATER
         /// <summary>
         ///     Copies the elements from <paramref name="source" /> into a read-only set and creates a wrapper
         ///     around it which uses value equality.
@@ -362,6 +383,23 @@ public static class ValueEqualityCollectionFactory
         public static IReadOnlySetWithValueEquality<T>
             CreateReadOnlySetWithValueEquality<T>(ReadOnlySpan<T> source) =>
             new ReadOnlySetWithValueEquality<T>(new HashSet<T>(collection: [.. source], comparer: null));
+#else
+        /// <summary>
+        ///     Copies the elements from <paramref name="source" /> into a read-only set and creates a wrapper
+        ///     around it which uses value equality.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
+        /// <param name="source">
+        ///     A <see cref="HashSet{T}" /> to wrap as a read-only set which uses value equality.
+        /// </param>
+        /// <returns>
+        ///     An <see cref="IReadOnlySetWithValueEquality{T}" /> which wraps the read-only set created from
+        ///     <paramref name="source" /> and uses value equality.
+        /// </returns>
+        public static IReadOnlySetWithValueEquality<T>
+            CreateReadOnlySetWithValueEquality<T>(ReadOnlySpan<T> source) =>
+            new HashSetWithValueEquality<T>(new HashSet<T>(collection: [.. source], comparer: null));
+#endif
 
         /// <summary>
         ///     Copies the elements from <paramref name="source" /> into a read-only queue and creates a wrapper
@@ -739,10 +777,69 @@ public static class ValueEqualityCollectionFactory
 
         public override int GetHashCode() => this.Underlying.Count;
     }
+#if !NET5_0_OR_GREATER
 
+    /// <summary>
+    ///     Used when building a set directly from a
+    ///     <see cref="HashSet{T}" /> this library constructed itself (e.g. from a collection expression).  On
+    ///     frameworks without <see cref="System.Collections.Generic.IReadOnlySet{T}" /> in the BCL,
+    ///     <see cref="HashSet{T}" /> does not implement this library's polyfilled substitute, so it is stored and
+    ///     accessed directly here instead of being converted.
+    /// </summary>
+    private sealed class HashSetWithValueEquality<T>(in HashSet<T> underlying)
+        : ReadOnlyCollectionWithValueEqualityBase<HashSet<T>, T>(underlying),
+            IReadOnlySetWithValueEquality<T>
+    {
+        public bool Contains(T item) => this.Underlying.Contains(item);
+
+        public bool IsProperSubsetOf(IEnumerable<T> other) => this.Underlying.IsProperSubsetOf(other);
+
+        public bool IsProperSupersetOf(IEnumerable<T> other) => this.Underlying.IsProperSupersetOf(other);
+
+        public bool IsSubsetOf(IEnumerable<T> other) => this.Underlying.IsSubsetOf(other);
+
+        public bool IsSupersetOf(IEnumerable<T> other) => this.Underlying.IsSupersetOf(other);
+
+        public bool Overlaps(IEnumerable<T> other) => this.Underlying.Overlaps(other);
+
+        public bool SetEquals(IEnumerable<T> other) => this.Underlying.SetEquals(other);
+
+        public override bool Equals(object? obj) => obj is IReadOnlySetWithValueEquality<T> c && this.SetEquals(c);
+
+        public override int GetHashCode() => this.Underlying.Count;
+    }
+#endif
+
+    /// <summary>
+    ///     Does not dDoes not derive from <see cref="ReadOnlyCollectionWithValueEqualityBase{TCollection, T}" /> because the
+    ///     downlevel build of
+    ///     <see cref="FrozenSet{T}" /> shipped for older target frameworks by the
+    ///     <c>System.Collections.Immutable</c> package does not implement
+    ///     <see cref="System.Collections.Generic.IReadOnlySet{T}" />, even on frameworks where that interface
+    ///     exists in the BCL, so it is stored and accessed directly here instead.
+    /// </summary>
     private sealed class FrozenSetWithValueEquality<T>(in FrozenSet<T> frozenSet)
-        : ReadOnlySetWithValueEquality<T>(frozenSet),
-            IFrozenSetWithValueEquality<T>;
+        : ReadOnlyCollectionWithValueEqualityBase<FrozenSet<T>, T>(frozenSet),
+            IFrozenSetWithValueEquality<T>
+    {
+        public bool Contains(T item) => this.Underlying.Contains(item);
+
+        public bool IsProperSubsetOf(IEnumerable<T> other) => this.Underlying.IsProperSubsetOf(other);
+
+        public bool IsProperSupersetOf(IEnumerable<T> other) => this.Underlying.IsProperSupersetOf(other);
+
+        public bool IsSubsetOf(IEnumerable<T> other) => this.Underlying.IsSubsetOf(other);
+
+        public bool IsSupersetOf(IEnumerable<T> other) => this.Underlying.IsSupersetOf(other);
+
+        public bool Overlaps(IEnumerable<T> other) => this.Underlying.Overlaps(other);
+
+        public bool SetEquals(IEnumerable<T> other) => this.Underlying.SetEquals(other);
+
+        public override bool Equals(object? obj) => obj is IReadOnlySetWithValueEquality<T> c && this.SetEquals(c);
+
+        public override int GetHashCode() => this.Underlying.Count;
+    }
 
     private sealed class ImmutableSetWithValueEquality<T>(in IImmutableSet<T> underlying)
         : ReadOnlyCollectionWithValueEqualityBase<IImmutableSet<T>, T>(underlying),
