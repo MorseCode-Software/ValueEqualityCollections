@@ -1,4 +1,4 @@
-version: '1.1.{build}'
+version: '{build}'
 
 image: Visual Studio 2026
 
@@ -62,16 +62,6 @@ deploy_script:
           throw "Found no project under src declaring both MinVerTagPrefix and PackageId."
       }
 
-      # A tag belongs to the package whose prefix it starts with, the rest of it being the version.
-      # The rest has to start with a digit, or sodaflow- would claim sodaflow-core-3.0.0.
-      #
-      # More than one match is refused rather than tie-broken. It takes one prefix extending
-      # another by something starting with a digit, which none of these do, so this cannot fire
-      # today; if a prefix added later made it fire, picking a winner would mean guessing which
-      # package the tag meant. The costs of the two failures are not comparable. Throwing loses a
-      # release until someone renames a prefix, and the packages are still sitting in the build
-      # artifacts. Guessing wrong publishes the wrong package, and nuget.org does not allow a
-      # version to be deleted or reused - only unlisted.
       $prefixes = @(
           $packageIdByPrefix.Keys |
               Where-Object {
@@ -92,9 +82,6 @@ deploy_script:
       $packageId = $packageIdByPrefix[$prefixes[0]]
       Write-Host "Tag '$tag' releases $packageId."
 
-      # Matched by name rather than by glob: SodaFlow.* would also match SodaFlow.Core and every
-      # other package here. dotnet pack names a file Id.Version.nupkg, so what follows the id and
-      # its dot is the start of the version.
       $package = @(
           Get-ChildItem artifacts\*.nupkg |
               Where-Object { $_.Name -notlike "*.symbols.nupkg" } |
