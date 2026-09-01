@@ -1,6 +1,6 @@
 version: '1.1.{build}'
 
-image: Visual Studio 2022
+image: Visual Studio 2026
 
 shallow_clone: false
 clone_depth: 0
