@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net472</TargetFrameworks>
+        <TargetFrameworks>net10.0;net472</TargetFrameworks>
         <OutputType>Exe</OutputType>
-        <TestingPlatformDotnetTestSupport>rrue</TestingPlatformDotnetTestSupport>
         <LangVersion>latest</LangVersion>
         <!-- TUnit's own transitive dependencies don't list net6.0 as officially tested; their netstandard2.0 assets work fine. -->
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
