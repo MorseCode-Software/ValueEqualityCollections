@@ -1,0 +1,42 @@
+<Project>
+
+    <PropertyGroup>
+        <Authors>MorseCode Software LLC</Authors>
+        <Company>MorseCode Software LLC</Company>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/MorseCode-Software/ValueEqualityCollections</PackageProjectUrl>
+		<Copyright>Copyright © MorseCode Software LLC 2026</Copyright>
+        <IncludeSource>True</IncludeSource>
+        <IncludeSymbols>True</IncludeSymbols>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(UsingMicrosoftNETSdk)' == 'true'">
+        <PackageReference Include="MinVer" Version="6.1.0" PrivateAssets="all" />
+    </ItemGroup>
+
+    <PropertyGroup Condition="'$(UsingMicrosoftNETSdk)' == 'true'">
+        <MinVerIgnoreHeight>true</MinVerIgnoreHeight>
+    </PropertyGroup>
+
+    <Target Name="AddUpperBoundToProjectReferenceVersions"
+            AfterTargets="_GetProjectReferenceVersions"
+            Condition="'$(NuspecFile)' == ''">
+        <ItemGroup>
+            <_ProjectReferencesWithVersions Update="@(_ProjectReferencesWithVersions)">
+                <ProjectVersion>[%(ProjectVersion), $([MSBuild]::Add($([System.Text.RegularExpressions.Regex]::Match(%(ProjectVersion), `^[0-9]+`).Value), 1)).0.0)</ProjectVersion>
+            </_ProjectReferencesWithVersions>
+        </ItemGroup>
+    </Target>
+
+    <Target Name="SetPackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
+        <PropertyGroup>
+            <_ProjectReleaseNotes>$(MSBuildProjectDirectory)\PackageReleaseNotes.md</_ProjectReleaseNotes>
+            <_SharedReleaseNotes>$(MSBuildThisFileDirectory)..\PackageReleaseNotes.md</_SharedReleaseNotes>
+
+            <PackageReleaseNotes Condition="'$(PackageReleaseNotes)' == '' And Exists('$(_ProjectReleaseNotes)')">$([System.IO.File]::ReadAllText('$(_ProjectReleaseNotes)'))</PackageReleaseNotes>
+            <PackageReleaseNotes Condition="'$(PackageReleaseNotes)' == '' And Exists('$(_SharedReleaseNotes)')">$([System.IO.File]::ReadAllText('$(_SharedReleaseNotes)'))</PackageReleaseNotes>
+            <PackageReleaseNotes Condition="'$(PackageReleaseNotes)' == ''">https://github.com/MorseCode-Software/ValueEqualityCollections/releases</PackageReleaseNotes>
+        </PropertyGroup>
+    </Target>
+
+</Project>
