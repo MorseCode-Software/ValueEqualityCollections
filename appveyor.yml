@@ -50,7 +50,7 @@ deploy_script:
       }
 
       $packageIdByPrefix = @{}
-      Get-ChildItem -Path src -Recurse -Include *.csproj, *.fsproj |
+      Get-ChildItem -Recurse -Include *.csproj, *.fsproj |
           Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' } |
           ForEach-Object {
               $project = [xml](Get-Content -Path $_.FullName -Raw)
@@ -59,7 +59,7 @@ deploy_script:
               if ($prefix -and $id) { $packageIdByPrefix[$prefix.InnerText] = $id.InnerText }
           }
       if ($packageIdByPrefix.Count -eq 0) {
-          throw "Found no project under src declaring both MinVerTagPrefix and PackageId."
+          throw "Found no project declaring both MinVerTagPrefix and PackageId."
       }
 
       $prefixes = @(
