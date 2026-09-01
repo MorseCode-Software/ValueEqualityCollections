@@ -23,7 +23,7 @@ build_script:
   - dotnet build %SOLUTION% -c %CONFIGURATION%
 
 test_script:
-  - dotnet test %SOLUTION% -c %CONFIGURATION% --no-build
+  - dotnet test --solution %SOLUTION% -c %CONFIGURATION% --no-build
 
 after_test:
   - dotnet pack %SOLUTION% -c %CONFIGURATION% -o artifacts
