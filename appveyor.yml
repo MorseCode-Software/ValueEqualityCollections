@@ -1,0 +1,67 @@
+version: '1.1.{build}'
+
+image: Visual Studio 2022
+
+shallow_clone: false
+clone_depth: 0
+
+configuration: Release
+
+environment:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  SOLUTION: MorseCode.Collections.ValueEquality.sln
+  NUGET_API_KEY:
+    secure: wJnjNcFPeKed+NXnE+IjPM5sAlJxY1Q3noeEdWi1E070zGc/E+pm6Dx1f8s7gNHB
+
+before_build:
+  - dotnet --info
+  - dotnet restore %SOLUTION%
+
+build_script:
+  - dotnet build %SOLUTION% -c %CONFIGURATION%
+
+test_script:
+  - dotnet test %SOLUTION% -c %CONFIGURATION% --no-build
+
+after_test:
+  - dotnet pack %SOLUTION% -c %CONFIGURATION% -o artifacts
+  - ps: Get-ChildItem artifacts\*.nupkg | Sort-Object Name | ForEach-Object { Write-Host $_.Name }
+
+artifacts:
+  - path: artifacts\*.nupkg
+    name: packages
+
+deploy_script:
+  - ps: |
+      $packageIdByPrefix = @{}
+      Get-ChildItem -Path src -Recurse -Include *.csproj, *.fsproj |
+          Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' } |
+          ForEach-Object {
+              $project = [xml](Get-Content -Path $_.FullName -Raw)
+              $id = $project.SelectSingleNode('//PackageId')
+              if ($id) { $packageIdByPrefix[$prefix.InnerText] = $id.InnerText }
+          }
+      if ($packageIdByPrefix.Count -eq 0) {
+          throw "Found no project under src declaring both MinVerTagPrefix and PackageId."
+      }
+      }
+
+      if ($prefixes.Count -gt 1) {
+          throw "Tag '$tag' matches more than one package prefix: $(($prefixes | Sort-Object) -join ', '). Rename one of them so that neither extends the other."
+      }
+
+      $packageId = $packageIdByPrefix[$prefixes[0]]
+      Write-Host "Tag '$tag' releases $packageId."
+
+      Get-ChildItem artifacts\*.nupkg |
+          Where-Object { $_.Name -notlike "*.symbols.nupkg" } |
+          ForEach-Object {
+              Write-Host "Pushing $($_.Name)"
+              dotnet nuget push $_.FullName `
+                  --skip-duplicate `
+                  --api-key $env:NUGET_API_KEY `
+                  --source https://api.nuget.org/v3/index.json
+              if ($LASTEXITCODE -ne 0) { throw "Failed to push $($_.Name)" }
+          }
