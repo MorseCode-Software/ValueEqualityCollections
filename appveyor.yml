@@ -35,26 +35,6 @@ artifacts:
 
 deploy_script:
   - ps: |
-      $packageIdByPrefix = @{}
-      Get-ChildItem -Path src -Recurse -Include *.csproj, *.fsproj |
-          Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' } |
-          ForEach-Object {
-              $project = [xml](Get-Content -Path $_.FullName -Raw)
-              $id = $project.SelectSingleNode('//PackageId')
-              if ($id) { $packageIdByPrefix[$prefix.InnerText] = $id.InnerText }
-          }
-      if ($packageIdByPrefix.Count -eq 0) {
-          throw "Found no project under src declaring both MinVerTagPrefix and PackageId."
-      }
-      }
-
-      if ($prefixes.Count -gt 1) {
-          throw "Tag '$tag' matches more than one package prefix: $(($prefixes | Sort-Object) -join ', '). Rename one of them so that neither extends the other."
-      }
-
-      $packageId = $packageIdByPrefix[$prefixes[0]]
-      Write-Host "Tag '$tag' releases $packageId."
-
       Get-ChildItem artifacts\*.nupkg |
           Where-Object { $_.Name -notlike "*.symbols.nupkg" } |
           ForEach-Object {
