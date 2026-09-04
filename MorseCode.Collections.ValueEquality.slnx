@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MorseCode.Collections.ValueEquality.UnitTests/MorseCode.Collections.ValueEquality.UnitTests.csproj" />
+  <Project Path="MorseCode.Collections.ValueEquality/MorseCode.Collections.ValueEquality.csproj" />
+</Solution>
